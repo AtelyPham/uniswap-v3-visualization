@@ -3,7 +3,7 @@ schema:
 
 documents: '**/*.queries.ts'
 generates:
-  'src/@types/graphql.d.tsx':
+  'src/types/graphql.d.tsx':
     plugins:
       - typescript
       - typescript-operations

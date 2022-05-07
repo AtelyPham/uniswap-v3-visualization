@@ -1,1 +1,1 @@
-export * from './pool.queries';
+export * from './pools';
