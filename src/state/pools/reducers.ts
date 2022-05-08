@@ -1,17 +1,16 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { addPoolKeys, updatePoolData } from './actions';
 
+export interface PoolDataToken {
+  address: string;
+  symbol: string;
+}
+
 export interface PoolData {
   address: string;
   feeTier: number;
-  token0: {
-    address: string;
-    symbol: string;
-  };
-  token1: {
-    address: string;
-    symbol: string;
-  };
+  token0: PoolDataToken;
+  token1: PoolDataToken;
   volumeUSD: number;
   volumeUSDChange: number;
   volumeUSDWeek: number;

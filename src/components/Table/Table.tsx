@@ -44,10 +44,16 @@ const Table: React.FC<TableProps> = ({ tableInstance, canSortable }) => {
                   scope="col"
                   className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2 md:px-4 py-1 md:py-2"
                 >
-                  {column.render('Header')}
-                  <span>
-                    {column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}
-                  </span>
+                  <div className="flex">
+                    {column.render('Header')}
+                    <span>
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? ' ▼'
+                          : ' ▲'
+                        : ''}
+                    </span>
+                  </div>
                 </th>
               ))}
             </tr>

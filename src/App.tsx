@@ -1,8 +1,10 @@
+import { cloneDeep } from '@apollo/client/utilities';
+import { POOLS_DATA } from 'apollo';
 import { PoolTable } from 'components';
+import { Card } from 'components';
 import React, { useMemo } from 'react';
 import { usePoolsState } from 'state/pools/hooks';
 import { PoolData } from 'state/pools/reducers';
-import { cloneDeep } from 'lodash';
 
 function App() {
   const poolsState = usePoolsState();
@@ -24,7 +26,9 @@ function App() {
       </header>
       <main>
         <div className="w-full mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap justify-around justify-items-start">
-          <PoolTable poolsData={poolsData} />
+          <Card title="Top pools" isLoading={!poolsData.length}>
+            <PoolTable poolsData={POOLS_DATA} />
+          </Card>
         </div>
       </main>
     </div>

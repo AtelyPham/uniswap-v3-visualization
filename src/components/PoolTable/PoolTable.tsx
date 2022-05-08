@@ -1,9 +1,41 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import { Column, usePagination, useSortBy, useTable } from 'react-table';
-import { formatDollarAmount } from 'utils';
+import { PoolDataToken } from 'state/pools/reducers';
+import { feeTierPercent, formatDollarAmount } from 'utils';
 import { Table } from '..';
+import { TokenLogo } from '../TokenLogo';
 import { PoolTableProps } from './PoolTable.props';
+
+const PoolCell = ({
+  value,
+  row,
+  column,
+  className,
+}: {
+  value: number;
+  row: any;
+  column: any;
+  className: string;
+}) => {
+  const feeTier = value;
+  const token0: PoolDataToken = row.original[column.accessorToken0];
+  const token1: PoolDataToken = row.original[column.accessorToken1];
+  return (
+    <span className={className}>
+      <div className="flex items-center">
+        <span className="flex mr-0.5">
+          <TokenLogo symbol={token0.symbol} />
+          <TokenLogo symbol={token1.symbol} />
+        </span>
+        {token0.symbol}/{token1.symbol}
+        <span className="inline-block ml-2 w-fit py-0.5 px-1 bg-gray-600 text-white rounded-lg font-medium text-xs">
+          {feeTierPercent(feeTier)}
+        </span>
+      </div>
+    </span>
+  );
+};
 
 const PoolTable: React.FC<PoolTableProps> = ({
   poolsData,
@@ -18,50 +50,66 @@ const PoolTable: React.FC<PoolTableProps> = ({
     [poolsData],
   );
 
-  const responsiveClassName = 'hidden sm:inline-block';
+  const responsiveClassName = 'sm:inline-block sm:w-full';
+  const hiddenClassName = classNames('hidden', responsiveClassName);
   const columns = useMemo<ReadonlyArray<Column>>(
     () => [
       {
-        Header: () => <span className={responsiveClassName}>#</span>,
+        Header: () => <span className={hiddenClassName}>#</span>,
         Cell: ({ value }: { value: any }) => (
-          <span className={responsiveClassName}>{value}</span>
+          <span className={hiddenClassName}>{value}</span>
         ),
         accessor: 'id',
         disableSortBy: true,
       },
       {
-        Header: () => <span className="text-left">pool</span>,
-        Cell: ({ value }: { value: any }) => (
-          <span className="text-left">{value}</span>
+        Header: () => (
+          <span className={classNames(responsiveClassName, 'text-left')}>
+            pool
+          </span>
         ),
-        accessor: 'pool',
+        Cell: args => (
+          <PoolCell
+            className={classNames(responsiveClassName, 'text-left')}
+            {...args}
+          />
+        ),
+        accessor: 'feeTier',
+        accessorToken0: 'token0',
+        accessorToken1: 'token1',
       },
       {
         Header: () => (
-          <span className="hidden sm:inline-block text-right">tvl</span>
+          <span className={classNames(hiddenClassName, 'text-right')}>tvl</span>
         ),
         Cell: ({ value }: { value: number }) => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
+          <span className={classNames(hiddenClassName, 'text-right')}>
             {formatDollarAmount(value)}
           </span>
         ),
         accessor: 'tvlUSD',
       },
       {
-        Header: <span className="text-right">volume 24h</span>,
+        Header: (
+          <span className={classNames(responsiveClassName, 'text-right')}>
+            volume 24h
+          </span>
+        ),
         Cell: ({ value }: { value: number }) => (
-          <span className="text-right">{formatDollarAmount(value)}</span>
+          <span className={classNames(responsiveClassName, 'text-right')}>
+            {formatDollarAmount(value)}
+          </span>
         ),
         accessor: 'volumeUSD',
       },
       {
         Header: () => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
+          <span className={classNames(hiddenClassName, 'text-right')}>
             Voumn 7d
           </span>
         ),
         Cell: ({ value }: { value: number }) => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
+          <span className={classNames(hiddenClassName, 'text-right')}>
             {formatDollarAmount(value)}
           </span>
         ),
@@ -83,11 +131,7 @@ const PoolTable: React.FC<PoolTableProps> = ({
     usePagination,
   );
 
-  return (
-    <div className="px-5 w-full">
-      <Table tableInstance={tableInstance} canSortable={true} />
-    </div>
-  );
+  return <Table tableInstance={tableInstance} canSortable={true} />;
 };
 
 export default PoolTable;
