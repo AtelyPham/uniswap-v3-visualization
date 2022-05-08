@@ -1,14 +1,17 @@
-import { usePoolData, useTopPoolAddresses } from 'apollo';
-import React from 'react';
+import { PoolTable } from 'components';
+import React, { useMemo } from 'react';
+import { usePoolsState } from 'state/pools/hooks';
+import { PoolData } from 'state/pools/reducers';
+import { cloneDeep } from 'lodash';
 
 function App() {
-  const { addresses } = useTopPoolAddresses();
-  usePoolData(addresses ?? []);
+  const poolsState = usePoolsState();
 
-  // const poolsData = useMemo(
-  //   () => (data ? Object.values(data).filter(Boolean) : []),
-  //   [data],
-  // );
+  const poolsData = useMemo(() => {
+    return Object.values(poolsState)
+      .map(p => cloneDeep(p.data))
+      .filter((p): p is PoolData => Boolean(p));
+  }, [poolsState]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -21,7 +24,7 @@ function App() {
       </header>
       <main>
         <div className="w-full mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap justify-around justify-items-start">
-          {/* <PoolTable poolsData={poolsData} /> */}
+          <PoolTable poolsData={poolsData} />
         </div>
       </main>
     </div>

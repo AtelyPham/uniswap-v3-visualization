@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import { useDeltaTimestamps } from 'hooks';
+import { PoolData } from 'state/pools/reducers';
 import {
   GetPoolDataQuery,
   OrderDirection,
@@ -37,24 +38,6 @@ export const GET_POOL_DATA = gql`
     }
   }
 `;
-
-export interface PoolData {
-  address: string;
-  feeTier: number;
-  token0: {
-    address: string;
-    symbol: string;
-  };
-  token1: {
-    address: string;
-    symbol: string;
-  };
-  volumeUSD: number;
-  volumeUSDChange: number;
-  volumeUSDWeek: number;
-  tvlUSD: number;
-  tvlUSDChange: number;
-}
 
 const parsePools = (pools: GetPoolDataQuery['pools']) =>
   pools.reduce(
