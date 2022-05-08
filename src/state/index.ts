@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import pools from './pools/reducers';
+import pools from './pools/reducer';
 
 const store = configureStore({
   reducer: {

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import { Column, usePagination, useSortBy, useTable } from 'react-table';
-import { PoolDataToken } from 'state/pools/reducers';
+import { PoolDataToken } from 'state/pools/reducer';
 import { feeTierPercent, formatDollarAmount } from 'utils';
 import { Table } from '..';
 import { TokenLogo } from '../TokenLogo';

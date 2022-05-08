@@ -4,7 +4,7 @@ import { PoolTable } from 'components';
 import { Card } from 'components';
 import React, { useMemo } from 'react';
 import { usePoolsState } from 'state/pools/hooks';
-import { PoolData } from 'state/pools/reducers';
+import { PoolData } from 'state/pools/reducer';
 
 function App() {
   const poolsState = usePoolsState();

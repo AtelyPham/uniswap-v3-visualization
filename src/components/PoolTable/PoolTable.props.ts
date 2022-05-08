@@ -1,4 +1,4 @@
-import { PoolData } from 'state/pools/reducers';
+import { PoolData } from 'state/pools/reducer';
 
 export interface PoolTableData extends PoolData {
   id?: number;

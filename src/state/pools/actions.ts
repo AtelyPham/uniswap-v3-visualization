@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-import { PoolData } from './reducers';
+import { PoolData } from './reducer';
 
 // pool detail info
 export const updatePoolData = createAction<{ pools: PoolData[] }>(

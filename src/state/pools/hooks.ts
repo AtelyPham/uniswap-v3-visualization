@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, AppState } from 'state';
 import { addPoolKeys, updatePoolData } from './actions';
-import { PoolData, PoolsState } from './reducers';
+import { PoolData, PoolsState } from './reducer';
 
 /**
  *

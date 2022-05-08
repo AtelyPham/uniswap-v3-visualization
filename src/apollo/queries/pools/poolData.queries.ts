@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import { useDeltaTimestamps } from 'hooks';
-import { PoolData } from 'state/pools/reducers';
+import { PoolData } from 'state/pools/reducer';
 import {
   GetPoolDataQuery,
   OrderDirection,
