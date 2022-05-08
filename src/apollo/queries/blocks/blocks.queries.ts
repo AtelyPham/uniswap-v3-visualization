@@ -1,6 +1,7 @@
-import { gql, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
 import { useClients } from 'hooks';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { splitQuery } from 'utils';
 
 export const GET_BLOCKS = (timestamps: string[]) => {
   let queryString = 'query blocks {';
@@ -28,39 +29,47 @@ export function useBlocksFromTimestamps(timestamps: number[]): {
     | undefined;
   error: boolean;
 } {
+  const [blocks, setBlocks] = useState<any>();
+  const [error, setError] = useState(false);
+
   const { blockClient } = useClients();
-  const timestampsStr = timestamps.map(ts => ts.toString());
-  const {
-    data: results,
-    loading,
-    error,
-  } = useQuery(GET_BLOCKS(timestampsStr), {
-    client: blockClient,
-    fetchPolicy: 'network-only',
-  });
+
+  useEffect(() => {
+    async function fetchData() {
+      const results = await splitQuery(GET_BLOCKS, blockClient, [], timestamps);
+      if (!results) {
+        setError(() => true);
+        return;
+      }
+
+      setBlocks((prev: any) => ({ ...(prev ?? {}), ...results }));
+    }
+
+    if (!error) {
+      fetchData();
+    }
+  }, []);
 
   const blocksFormatted = useMemo(() => {
-    if (loading || !results?.data) {
+    if (!blocks || blocks.length == 0 || error) {
       return;
     }
 
     const formatted = [];
-    const networkBlocks = results.data;
-
-    for (const t in networkBlocks) {
-      if (networkBlocks[t].length > 0) {
+    for (const t in blocks) {
+      if (blocks[t].length > 0) {
         formatted.push({
           timestamp: t.split('t')[1],
-          number: networkBlocks[t][0]['number'],
+          number: parseInt(blocks[t][0]['number']),
         });
       }
     }
 
     return formatted;
-  }, [loading, results]);
+  }, [blocks, error]);
 
   return {
     blocks: blocksFormatted,
-    error: !!error,
+    error,
   };
 }

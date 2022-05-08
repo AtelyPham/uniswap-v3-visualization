@@ -1,12 +1,10 @@
-export interface PoolTableData {
-  pool: string;
-  tvl: string;
-  volume1h: string;
-  volume24h: string;
-  volume7d: string;
-  id: number;
+import { PoolData } from 'apollo';
+
+export interface PoolTableData extends PoolData {
+  id?: number;
 }
 
 export interface PoolTableProps {
-  data: ReadonlyArray<PoolTableData>;
+  poolsData: ReadonlyArray<PoolTableData>;
+  itemsPerPage?: number;
 }

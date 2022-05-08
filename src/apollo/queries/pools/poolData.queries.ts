@@ -1,14 +1,13 @@
 import { gql, useQuery } from '@apollo/client';
+import { useDeltaTimestamps } from 'hooks';
 import {
   GetPoolDataQuery,
   OrderDirection,
-  Pool,
   Pool_OrderBy,
 } from 'types/graphql.d';
-import { useDeltaTimestamps } from 'hooks';
-import { useBlocksFromTimestamps } from '../blocks';
 import { ArrayElement } from 'types/utils';
 import { formatTokenSymbol, get2DayChange } from 'utils';
+import { useBlocksFromTimestamps } from '../blocks';
 
 export const GET_POOL_DATA = gql`
   query GetPoolData(
@@ -80,6 +79,8 @@ export const usePoolData = (
       }
     | undefined;
 } => {
+  const isSkip = !poolAddresses || !poolAddresses.length;
+
   // Get blocks in 24h, 48h, 1w ago
   const [t24, t48, tWeek] = useDeltaTimestamps();
   const { blocks, error: blocksError } = useBlocksFromTimestamps([
@@ -96,7 +97,10 @@ export const usePoolData = (
   };
 
   const { loading, error, data } = useQuery<GetPoolDataQuery>(GET_POOL_DATA, {
-    variables: commonVariables,
+    variables: {
+      ...commonVariables,
+    },
+    skip: isSkip,
   });
 
   const {
@@ -106,10 +110,13 @@ export const usePoolData = (
   } = useQuery<GetPoolDataQuery>(GET_POOL_DATA, {
     variables: {
       ...commonVariables,
-      block: block24 && {
-        number: block24.number,
-      },
+      block: block24
+        ? {
+            number: block24.number,
+          }
+        : undefined,
     },
+    skip: isSkip,
   });
 
   const {
@@ -119,10 +126,13 @@ export const usePoolData = (
   } = useQuery<GetPoolDataQuery>(GET_POOL_DATA, {
     variables: {
       ...commonVariables,
-      block: block48 && {
-        number: block48.number,
-      },
+      block: block48
+        ? {
+            number: block48.number,
+          }
+        : undefined,
     },
+    skip: isSkip,
   });
 
   const {
@@ -132,8 +142,13 @@ export const usePoolData = (
   } = useQuery<GetPoolDataQuery>(GET_POOL_DATA, {
     variables: {
       ...commonVariables,
-      block: blockWeek,
+      block: blockWeek
+        ? {
+            number: blockWeek.number,
+          }
+        : undefined,
     },
+    skip: isSkip,
   });
 
   const hasAnyError = [error, error24, error48, errorWeek, blocksError].some(
