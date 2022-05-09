@@ -1,5 +1,6 @@
 export * from './Card';
 export * from './Error';
+export * from './ExternalLink';
 export * from './Logo';
 export * from './pagination';
 export * from './PoolTable';

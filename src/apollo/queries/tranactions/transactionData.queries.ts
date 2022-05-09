@@ -1,7 +1,7 @@
-import { ArrayElement } from './../../../types/utils.d';
-import { ApolloClient, gql, NormalizedCacheObject } from '@apollo/client';
-import { Transaction, TransactionType } from 'state/transactions/reducer';
+import { gql, useQuery } from '@apollo/client';
+import { TransactionData, TransactionType } from 'state/transactions/reducer';
 import { Burn, GetAllTransactionsQuery, Mint, Swap } from 'types/graphql.d';
+import { ArrayElement } from 'types/utils';
 import { formatTokenSymbol } from 'utils';
 
 const GET_ALL_TRANSACTIONS = gql`
@@ -64,15 +64,14 @@ const GET_ALL_TRANSACTIONS = gql`
   }
 `;
 
-export async function useTransactionData(
-  client: ApolloClient<NormalizedCacheObject>,
-): Promise<Transaction[] | undefined> {
+export function useTransactionData(): TransactionData[] | undefined {
   try {
-    const { data, error, loading } =
-      await client.query<GetAllTransactionsQuery>({
-        query: GET_ALL_TRANSACTIONS,
+    const { data, error, loading } = useQuery<GetAllTransactionsQuery>(
+      GET_ALL_TRANSACTIONS,
+      {
         fetchPolicy: 'cache-first',
-      });
+      },
+    );
 
     if (error || loading || !data) {
       return undefined;
@@ -80,7 +79,7 @@ export async function useTransactionData(
 
     const formatted = data.transactions.reduce(
       (
-        accum: Transaction[],
+        accum: TransactionData[],
         t: ArrayElement<GetAllTransactionsQuery['transactions']>,
       ) => {
         const mintEntries = t.mints

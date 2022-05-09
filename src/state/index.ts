@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import pools from './pools/reducer';
 import tokens from './tokens/reducer';
+import transactions from './transactions/reducer';
 
 const store = configureStore({
   reducer: {
     pools,
     tokens,
+    transactions,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({ thunk: false, immutableCheck: false }),

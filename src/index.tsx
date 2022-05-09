@@ -6,25 +6,24 @@ import store from 'state';
 import { client } from './apollo';
 import App from './App';
 import './index.css';
-import PoolUpdater from 'state/pools/updater';
-import TokenUpdater from 'state/tokens/updater';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 
-const Updater = () => (
+/* const Updater = () => (
   <>
     <PoolUpdater />
     <TokenUpdater />
+    <TransactionUpdater />
   </>
-);
+); */
 
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <Provider store={store}>
-        <Updater />
+        {/* <Updater /> */}
         <App />
       </Provider>
     </ApolloProvider>

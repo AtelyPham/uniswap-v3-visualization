@@ -7,7 +7,7 @@ export enum TransactionType {
   BURN,
 }
 
-export type Transaction = {
+export type TransactionData = {
   type: TransactionType;
   hash: string;
   timestamp: string;
@@ -23,7 +23,7 @@ export type Transaction = {
 
 export interface TransactionState {
   byNetwork: {
-    transactions?: Transaction[];
+    transactions?: TransactionData[];
     lastUpdate?: number;
   };
 }

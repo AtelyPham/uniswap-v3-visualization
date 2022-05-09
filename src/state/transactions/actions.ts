@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
-import { Transaction } from './reducer';
+import { TransactionData } from './reducer';
 
-export const updateTransactions = createAction<{ transactions: Transaction[] }>(
-  'protocol/updateTransactions',
-);
+export const updateTransactions = createAction<{
+  transactions: TransactionData[];
+}>('protocol/updateTransactions');

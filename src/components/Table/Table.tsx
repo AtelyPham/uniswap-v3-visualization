@@ -8,7 +8,11 @@ import {
   HiChevronRight,
 } from 'react-icons/hi';
 
-const Table: React.FC<TableProps> = ({ tableInstance, canSortable }) => {
+const Table: React.FC<TableProps> = ({
+  tableInstance,
+  canSortable = false,
+  canFilter = false,
+}) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -42,17 +46,16 @@ const Table: React.FC<TableProps> = ({ tableInstance, canSortable }) => {
                   )}
                   key={idx}
                   scope="col"
-                  className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2 md:px-4 py-1 md:py-2"
+                  className="text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  <div className="flex">
-                    {column.render('Header')}
-                    <span>
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? ' ▼'
-                          : ' ▲'
-                        : ''}
-                    </span>
+                  {column.render('Header')}
+                  <span>
+                    {column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}
+                  </span>
+                  <div>
+                    {canFilter && column.canFilter
+                      ? column.render('Filter')
+                      : null}
                   </div>
                 </th>
               ))}
