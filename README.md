@@ -1,46 +1,78 @@
-# Getting Started with Create React App
+# 👨🏼‍💻 Webb Full Stack Coding Challenge
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Visualizes data from [Uniswap V3 Subgraph](https://github.com/Uniswap/v3-subgraph).
 
-## Available Scripts
+## Version
 
-In the project directory, you can run:
+- Node `v14.17.6`.
+- Yarn `1.22.15`
 
-### `yarn start`
+## How to start locally
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Clone the repo:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```shell
+git clone
+```
 
-### `yarn test`
+\
+Install dependencies:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```shell
+yarn
+```
 
-### `yarn build`
+or
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```shell
+yarn install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+\
+Generate Typescript code from GraphQL
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```SHELL
+yarn generate
+```
 
-### `yarn eject`
+\
+Serve the frontend locally
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```SHEEL
+yarn start
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+\
+Other scripts:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- `yarn lint`: Linting checking
+- `yarn prettier`: Prettier checking
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Technologies used
 
-## Learn More
+- [React](https://reactjs.org/)
+- [Redux](https://redux.js.org/)
+- [Apollo Client](https://www.apollographql.com/docs/react/)
+- [Tailwindcss](https://tailwindcss.com/)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Todos
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- [x] Inspect what data / queries will be required using hosted [V3 subgraph explorer](https://thegraph.com/hosted-service/subgraph/uniswap/uniswap-v3).
+
+- [x] Setup data model, queries, and fetch data from Uniswap V3 Subgraph
+
+- [x] Add a tabular visualization for “Top Pools” that displays total volume locked (TVL), and 24Hr volume
+
+- [x] Add a tabular visualization for “Tokens” that displays price point, price change, and TVL
+
+- [x] Add a tabular visualization for “Transactions” that displays total value, token amounts, linked account to Etherscan, and time (e.g. 15 mins ago)
+
+- [x] Add a button which the user can click to refresh data in the views
+
+- [x] Update readme to outline how to serve the frontend locally
+
+- [x] Include in-line documentation
+
+- [ ] Add summary and chart
+
+- [ ] Writing tests
