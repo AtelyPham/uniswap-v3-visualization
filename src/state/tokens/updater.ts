@@ -20,8 +20,8 @@ export default (): null => {
 
   // detect for which addresses we havent load token data yet
   const unfetchedTokenAddresses = useMemo(() => {
-    return Object.keys(tokensState).reduce((accum: string[], key) => {
-      const tokenData = tokensState[key];
+    return Object.keys(tokensState.byAddress).reduce((accum: string[], key) => {
+      const tokenData = tokensState.byAddress[key];
       if (!tokenData.data || !tokenData.lastUpdated) {
         accum.push(key);
       }

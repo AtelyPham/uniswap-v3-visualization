@@ -14,21 +14,25 @@ export interface TokenData {
 }
 
 export interface TokensState {
-  [address: string]: {
-    data: TokenData | undefined;
-    lastUpdated: number | undefined;
+  byAddress: {
+    [address: string]: {
+      data: TokenData | undefined;
+      lastUpdated: number | undefined;
+    };
   };
 }
 
-export const initialState: TokensState = {};
+export const initialState: TokensState = {
+  byAddress: {},
+};
 
 export default createReducer(initialState, builder =>
   builder
     .addCase(updateTokenData, (state, { payload: { tokens } }) => {
       tokens.map(
         tokenData =>
-          (state[tokenData.address] = {
-            ...state[tokenData.address],
+          (state.byAddress[tokenData.address] = {
+            ...state.byAddress[tokenData.address],
             data: tokenData,
             lastUpdated: currentTimestamp(),
           }),
@@ -36,8 +40,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(addTokenKeys, (state, { payload: { tokenAddresses } }) => {
       tokenAddresses.map(address => {
-        if (!state[address]) {
-          state[address] = {
+        if (!state.byAddress[address]) {
+          state.byAddress[address] = {
             data: undefined,
             lastUpdated: undefined,
           };

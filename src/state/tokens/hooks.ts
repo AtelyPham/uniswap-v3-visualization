@@ -48,7 +48,7 @@ export function useTokenDatas(tokenAddresses: string[]): TokenData[] {
 
   const untrackedAddresses = tokenAddresses.reduce(
     (accum: string[], address) => {
-      if (!Object.keys(tokensState).includes(address)) {
+      if (!Object.keys(tokensState.byAddress).includes(address)) {
         accum.push(address);
       }
       return accum;
@@ -65,7 +65,7 @@ export function useTokenDatas(tokenAddresses: string[]): TokenData[] {
   // filter for tokens with data
   const tokensWithData = tokenAddresses
     .map(address => {
-      const tokenData = tokensState[address]?.data;
+      const tokenData = tokensState.byAddress[address]?.data;
       return tokenData ?? undefined;
     })
     .filter((token): token is TokenData => Boolean(token));

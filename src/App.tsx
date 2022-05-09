@@ -21,7 +21,7 @@ function App() {
 
   const tokensState = useTokensState();
   const tokensData = useMemo(() => {
-    return Object.values(tokensState)
+    return Object.values(tokensState.byAddress)
       .map(t => cloneDeep(t.data))
       .filter((t): t is TokenData => Boolean(t));
   }, [tokensState]);
