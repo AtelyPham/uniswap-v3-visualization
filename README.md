@@ -2,6 +2,22 @@
 
 Visualizes data from [Uniswap V3 Subgraph](https://github.com/Uniswap/v3-subgraph).
 
+## Project structure
+
+- `apollo`: Apollo client setup and graphql queries.
+
+- `components`: React components.
+
+- `constants`: Project constants.
+
+- `hooks`: React hooks.
+
+- `state`: The app state.
+
+- `types`: Generate and defined `Typescript` type file.
+
+- `utils`: Commonly-used utilities.
+
 ## Version
 
 - Node `v14.17.6`.
