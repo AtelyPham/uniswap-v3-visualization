@@ -7,14 +7,14 @@ import { PoolData } from 'state/pools/reducer';
 import { useTokensState } from 'state/tokens/hooks';
 import { TokenData } from 'state/tokens/reducer';
 import {
-  useRefreshTransaction,
   useTransactionState,
+  useRefreshTransaction,
 } from 'state/transactions/hooks';
 
 function App() {
   const poolsState = usePoolsState();
   const poolsData = useMemo(() => {
-    return Object.values(poolsState)
+    return Object.values(poolsState.byAddress)
       .map(p => cloneDeep(p.data))
       .filter((p): p is PoolData => Boolean(p));
   }, [poolsState]);

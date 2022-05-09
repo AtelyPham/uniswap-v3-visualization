@@ -20,21 +20,25 @@ export interface PoolData {
 }
 
 export interface PoolsState {
-  [address: string]: {
-    data: PoolData | undefined;
-    lastUpdated: number | undefined;
+  byAddress: {
+    [address: string]: {
+      data: PoolData | undefined;
+      lastUpdated: number | undefined;
+    };
   };
 }
 
-export const initialState = {} as PoolsState;
+export const initialState = {
+  byAddress: {},
+} as PoolsState;
 
 export default createReducer(initialState, builder =>
   builder
     .addCase(updatePoolData, (state, { payload: { pools } }) => {
       pools.map(
         poolData =>
-          (state[poolData.address] = {
-            ...state[poolData.address],
+          (state.byAddress[poolData.address] = {
+            ...state.byAddress[poolData.address],
             data: poolData,
             lastUpdated: currentTimestamp(),
           }),
@@ -43,8 +47,8 @@ export default createReducer(initialState, builder =>
     // add address to byAddress keys if not included yet
     .addCase(addPoolKeys, (state, { payload: { poolAddresses } }) => {
       poolAddresses.map(address => {
-        if (!state[address]) {
-          state[address] = {
+        if (!state.byAddress[address]) {
+          state.byAddress[address] = {
             data: undefined,
             lastUpdated: undefined,
           };

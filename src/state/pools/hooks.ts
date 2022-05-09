@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, AppState } from 'state';
 import { addPoolKeys, updatePoolData } from './actions';
@@ -34,42 +34,4 @@ export function useAddPoolKeys(): (addresses: string[]) => void {
     (poolAddresses: string[]) => dispatch(addPoolKeys({ poolAddresses })),
     [dispatch],
   );
-}
-
-/**
- *
- * @param poolAddresses addresses to get pools data
- * @returns pools with stored data in redux, also add
- * address which not exists in the store
- */
-export function usePoolDatas(poolAddresses: string[]): PoolData[] {
-  const poolsState = usePoolsState();
-  const addPoolKeys = useAddPoolKeys();
-
-  const untrackedAddresses = poolAddresses.reduce(
-    (accum: string[], address) => {
-      if (!Object.keys(poolsState).includes(address)) {
-        accum.push(address);
-      }
-      return accum;
-    },
-    [],
-  );
-
-  useEffect(() => {
-    if (untrackedAddresses.length) {
-      addPoolKeys(untrackedAddresses);
-    }
-    return;
-  }, [addPoolKeys, untrackedAddresses]);
-
-  // filter for pools with data
-  const poolsWithData = poolAddresses
-    .map(address => {
-      const poolData = poolsState[address]?.data;
-      return poolData ?? undefined;
-    })
-    .filter((pool): pool is PoolData => Boolean(pool));
-
-  return poolsWithData;
 }

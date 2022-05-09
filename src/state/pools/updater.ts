@@ -20,8 +20,8 @@ export default (): null => {
 
   // detect for which addresses we havent loaded pool data yet
   const unfetchedPoolAddresses = useMemo(() => {
-    return Object.keys(poolsState).reduce((accum: string[], key) => {
-      const poolData = poolsState[key];
+    return Object.keys(poolsState.byAddress).reduce((accum: string[], key) => {
+      const poolData = poolsState.byAddress[key];
       if (!poolData.data || !poolData.lastUpdated) {
         accum.push(key);
       }
