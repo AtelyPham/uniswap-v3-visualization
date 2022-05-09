@@ -12,7 +12,8 @@ Visualizes data from [Uniswap V3 Subgraph](https://github.com/Uniswap/v3-subgrap
 Clone the repo:
 
 ```shell
-git clone
+git clone https://github.com/AtelyPham/webb-full-stack-coding-challenge.git
+cd webb-full-stack-coding-challenge
 ```
 
 \
