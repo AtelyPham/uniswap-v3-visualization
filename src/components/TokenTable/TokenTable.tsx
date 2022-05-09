@@ -1,53 +1,50 @@
 import classNames from 'classnames';
+import { Percent } from 'components/Percent';
+import { Table } from 'components/Table';
+import { TokenLogo } from 'components/TokenLogo';
 import React, { useMemo } from 'react';
 import { Column, usePagination, useSortBy, useTable } from 'react-table';
-import { PoolDataToken } from 'state/pools/reducer';
-import { feeTierPercent, formatDollarAmount } from 'utils';
-import { Table } from '..';
-import { TokenLogo } from '../TokenLogo';
-import { PoolTableProps } from './PoolTable.props';
+import { formatDollarAmount } from 'utils';
+import { TokenTableProps } from './TokenTable.props';
 
-const PoolCell = ({
+const TokenCell = ({
   value,
   row,
   column,
   className,
 }: {
-  value: number;
+  value: string;
   row: any;
   column: any;
   className: string;
 }) => {
-  const feeTier = value;
-  const token0: PoolDataToken = row.original[column.accessorToken0];
-  const token1: PoolDataToken = row.original[column.accessorToken1];
+  const name = value;
+  const symbol: string = row.original[column.accessorSymbol];
+  const address: string = row.original[column.accessorAddress];
+
   return (
     <span className={className}>
       <div className="flex items-center">
-        <span className="flex mr-0.5">
-          <TokenLogo address={token0.address} symbol={token0.symbol} />
-          <TokenLogo address={token1.address} symbol={token1.symbol} />
+        <span className="inline-block mr-1">
+          <TokenLogo address={address} symbol={symbol} />
         </span>
-        {token0.symbol}/{token1.symbol}
-        <span className="inline-block ml-2 w-fit py-0.5 px-1 bg-gray-600 text-white rounded-lg font-medium text-xs">
-          {feeTierPercent(feeTier)}
-        </span>
+        {name} &nbsp;<span className="text-gray-400">({symbol})</span>
       </div>
     </span>
   );
 };
 
-const PoolTable: React.FC<PoolTableProps> = ({
-  poolsData,
+const TokenTable: React.FC<TokenTableProps> = ({
+  tokensData,
   itemsPerPage = 10,
 }) => {
   const data = useMemo(
     () =>
-      poolsData.map((pool, idx) => {
-        pool.id = idx + 1;
-        return pool;
+      tokensData.map((token, idx) => {
+        token.id = idx + 1;
+        return token;
       }),
-    [poolsData],
+    [tokensData],
   );
 
   const responsiveClassName = 'sm:inline-block sm:w-full';
@@ -65,34 +62,49 @@ const PoolTable: React.FC<PoolTableProps> = ({
       {
         Header: () => (
           <span className={classNames(responsiveClassName, 'text-left')}>
-            pool
+            Name
           </span>
         ),
         Cell: args => (
-          <PoolCell
+          <TokenCell
             className={classNames(responsiveClassName, 'text-left')}
             {...args}
           />
         ),
-        accessor: 'feeTier',
-        accessorToken0: 'token0',
-        accessorToken1: 'token1',
+        accessor: 'name',
+        accessorSymbol: 'symbol',
+        accessorAddress: 'address',
       },
       {
         Header: () => (
-          <span className={classNames(hiddenClassName, 'text-right')}>tvl</span>
+          <span className={classNames(responsiveClassName, 'text-right')}>
+            Price
+          </span>
         ),
         Cell: ({ value }: { value: number }) => (
           <span className={classNames(hiddenClassName, 'text-right')}>
             {formatDollarAmount(value)}
           </span>
         ),
-        accessor: 'tvlUSD',
+        accessor: 'priceUSD',
       },
       {
-        Header: (
+        Header: () => (
           <span className={classNames(responsiveClassName, 'text-right')}>
-            volume 24h
+            Price Change
+          </span>
+        ),
+        Cell: ({ value }: { value: number }) => (
+          <span className={classNames(responsiveClassName, 'text-right')}>
+            <Percent value={value} />
+          </span>
+        ),
+        accessor: 'priceUSDChange',
+      },
+      {
+        Header: () => (
+          <span className={classNames(responsiveClassName, 'text-right')}>
+            Volume 24h
           </span>
         ),
         Cell: ({ value }: { value: number }) => (
@@ -104,16 +116,16 @@ const PoolTable: React.FC<PoolTableProps> = ({
       },
       {
         Header: () => (
-          <span className={classNames(hiddenClassName, 'text-right')}>
-            Voumn 7d
+          <span className={classNames(responsiveClassName, 'text-right')}>
+            tvl
           </span>
         ),
         Cell: ({ value }: { value: number }) => (
-          <span className={classNames(hiddenClassName, 'text-right')}>
+          <span className={classNames(responsiveClassName, 'text-right')}>
             {formatDollarAmount(value)}
           </span>
         ),
-        accessor: 'volumeUSDWeek',
+        accessor: 'tvlUSD',
       },
     ],
     [],
@@ -134,4 +146,4 @@ const PoolTable: React.FC<PoolTableProps> = ({
   return <Table tableInstance={tableInstance} canSortable={true} />;
 };
 
-export default PoolTable;
+export default TokenTable;

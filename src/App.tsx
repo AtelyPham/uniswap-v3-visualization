@@ -1,19 +1,25 @@
 import { cloneDeep } from '@apollo/client/utilities';
-import { POOLS_DATA } from 'apollo';
-import { PoolTable } from 'components';
-import { Card } from 'components';
+import { Card, PoolTable, TokenTable } from 'components';
 import React, { useMemo } from 'react';
 import { usePoolsState } from 'state/pools/hooks';
 import { PoolData } from 'state/pools/reducer';
+import { useTokensState } from 'state/tokens/hooks';
+import { TokenData } from 'state/tokens/reducer';
 
 function App() {
   const poolsState = usePoolsState();
-
   const poolsData = useMemo(() => {
     return Object.values(poolsState)
       .map(p => cloneDeep(p.data))
       .filter((p): p is PoolData => Boolean(p));
   }, [poolsState]);
+
+  const tokensState = useTokensState();
+  const tokensData = useMemo(() => {
+    return Object.values(tokensState)
+      .map(t => cloneDeep(t.data))
+      .filter((t): t is TokenData => Boolean(t));
+  }, [tokensState]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -26,8 +32,11 @@ function App() {
       </header>
       <main>
         <div className="w-full mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap justify-around justify-items-start">
-          <Card title="Top pools" isLoading={!poolsData.length}>
-            <PoolTable poolsData={POOLS_DATA} />
+          <Card title="Top pools">
+            <PoolTable poolsData={poolsData} />
+          </Card>
+          <Card title="Top tokens">
+            <TokenTable tokensData={tokensData} />
           </Card>
         </div>
       </main>

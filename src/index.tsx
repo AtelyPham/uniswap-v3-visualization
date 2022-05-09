@@ -7,6 +7,7 @@ import { client } from './apollo';
 import App from './App';
 import './index.css';
 import PoolUpdater from 'state/pools/updater';
+import TokenUpdater from 'state/tokens/updater';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -15,6 +16,7 @@ const root = ReactDOM.createRoot(
 const Updater = () => (
   <>
     <PoolUpdater />
+    <TokenUpdater />
   </>
 );
 

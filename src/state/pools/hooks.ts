@@ -6,13 +6,7 @@ import { PoolData, PoolsState } from './reducer';
 
 /**
  *
- * @returns the stored pool state
- * {
- *  pools: {
- *    [address: string]: PoolData,
- *    lastUpdated: number;
- *  }
- * }
+ * @returns the stored pool data
  */
 export function usePoolsState(): PoolsState {
   return useSelector((state: AppState) => state.pools);

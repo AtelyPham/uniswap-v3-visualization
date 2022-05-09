@@ -6,3 +6,4 @@ export * from './PoolTable';
 export * from './Spinner';
 export * from './Table';
 export * from './TokenLogo';
+export * from './TokenTable';

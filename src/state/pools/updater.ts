@@ -37,7 +37,12 @@ export default (): null => {
   } = usePoolData(unfetchedPoolAddresses);
 
   useEffect(() => {
-    if (poolDatas && !poolDataError && !poolDataLoading) {
+    if (
+      poolDatas &&
+      Object.values(poolDatas).length &&
+      !poolDataError &&
+      !poolDataLoading
+    ) {
       updatePoolData(Object.values(poolDatas));
     }
   }, [poolDataError, poolDataLoading, poolDatas, updatePoolData]);

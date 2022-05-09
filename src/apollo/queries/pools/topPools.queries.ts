@@ -4,11 +4,7 @@ import { useClients } from 'hooks';
 import { useMemo } from 'react';
 
 export const GET_TOP_POOLS = gql`
-  query GetTopPools(
-    $first: Int
-    $orderBy: Pool_orderBy
-    $orderDirection: OrderDirection
-  ) {
+  query GetTopPools {
     pools(first: 50, orderBy: totalValueLockedUSD, orderDirection: desc) {
       id
     }

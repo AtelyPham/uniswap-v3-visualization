@@ -62,8 +62,6 @@ export const usePoolData = (
       }
     | undefined;
 } => {
-  const isSkip = !poolAddresses || !poolAddresses.length;
-
   // Get blocks in 24h, 48h, 1w ago
   const [t24, t48, tWeek] = useDeltaTimestamps();
   const { blocks, error: blocksError } = useBlocksFromTimestamps([
@@ -83,7 +81,6 @@ export const usePoolData = (
     variables: {
       ...commonVariables,
     },
-    skip: isSkip,
   });
 
   const {
@@ -99,7 +96,6 @@ export const usePoolData = (
           }
         : undefined,
     },
-    skip: isSkip,
   });
 
   const {
@@ -115,7 +111,6 @@ export const usePoolData = (
           }
         : undefined,
     },
-    skip: isSkip,
   });
 
   const {
@@ -131,7 +126,6 @@ export const usePoolData = (
           }
         : undefined,
     },
-    skip: isSkip,
   });
 
   const hasAnyError = [error, error24, error48, errorWeek, blocksError].some(
