@@ -41,16 +41,19 @@ const TransactionTable: React.FC<TransactioniTableProps> = ({
     [],
   );
 
-  const responsiveClassName = 'lg:inline-block lg:w-full';
-  const hiddenClassName = classNames('hidden', responsiveClassName);
-
-  const textLeft = classNames(responsiveClassName, 'text-left');
-
-  const textRight = classNames(responsiveClassName, 'text-center');
-  const hiddenTextRight = classNames(hiddenClassName, 'text-center');
-
+  const largeInline = 'lg:inline';
+  const hiddenToLarge = classNames('hidden', largeInline);
+  const hiddenToSmall = classNames('hidden', 'sm:inline');
   const columns = useMemo<ReadonlyArray<Column>>(
     () => [
+      {
+        Header: () => <span className={hiddenToLarge}>#</span>,
+        Cell: ({ value }: { value: number }) => (
+          <span className={hiddenToLarge}>{value}</span>
+        ),
+        accessor: 'id',
+        disableFilters: true,
+      },
       {
         Header: '',
         accessor: 'type',
@@ -59,22 +62,22 @@ const TransactionTable: React.FC<TransactioniTableProps> = ({
         accessorToken1Symbol: 'token1Symbol',
         accessorAmountToken0: 'amountToken0',
         accessorAmountToken1: 'amountToken1',
-        Cell: args => <TransactionNameCell className={textLeft} {...args} />,
+        Cell: args => <TransactionNameCell className={largeInline} {...args} />,
         Filter: args => <TransactionFilter {...args} />,
         disableSortBy: true,
       },
       {
         Header: () => {
-          return <span className={textRight}>Total value</span>;
+          return <span className={hiddenToSmall}>Total value</span>;
         },
         Cell: ({ value }: { value: number }) => (
-          <span className={textRight}>{formatDollarAmount(value)}</span>
+          <span className={hiddenToSmall}>{formatDollarAmount(value)}</span>
         ),
         accessor: 'amountUSD',
         disableFilters: true,
       },
       {
-        Header: () => <span className={hiddenTextRight}>Token Amount</span>,
+        Header: () => <span className={hiddenToLarge}>Token Amount</span>,
         Cell: ({
           value,
           row,
@@ -86,7 +89,7 @@ const TransactionTable: React.FC<TransactioniTableProps> = ({
         }) => {
           const symbol = row.original[column.accesorTokenSymbol];
           return (
-            <span className={hiddenTextRight}>{`${formatAmount(
+            <span className={hiddenToLarge}>{`${formatAmount(
               value,
             )} ${symbol}`}</span>
           );
@@ -96,7 +99,7 @@ const TransactionTable: React.FC<TransactioniTableProps> = ({
         disableFilters: true,
       },
       {
-        Header: () => <span className={hiddenTextRight}>Token Amount</span>,
+        Header: () => <span className={hiddenToLarge}>Token Amount</span>,
         Cell: ({
           value,
           row,
@@ -108,7 +111,7 @@ const TransactionTable: React.FC<TransactioniTableProps> = ({
         }) => {
           const symbol = row.original[column.accesorTokenSymbol];
           return (
-            <span className={hiddenTextRight}>{`${formatAmount(
+            <span className={hiddenToLarge}>{`${formatAmount(
               value,
             )} ${symbol}`}</span>
           );
@@ -118,10 +121,10 @@ const TransactionTable: React.FC<TransactioniTableProps> = ({
         disableFilters: true,
       },
       {
-        Header: () => <span className={hiddenTextRight}>Account</span>,
+        Header: () => <span className={hiddenToSmall}>Account</span>,
         Cell: ({ value }: { value: string }) => {
           return (
-            <span className={hiddenTextRight}>
+            <span className={hiddenToSmall}>
               <ExternalLink href={getEtherscanLink(value, 'address')}>
                 {shortenAddress(value)}
               </ExternalLink>
@@ -132,9 +135,9 @@ const TransactionTable: React.FC<TransactioniTableProps> = ({
         disableFilters: true,
       },
       {
-        Header: () => <span className={hiddenTextRight}>Time</span>,
+        Header: () => <span className={largeInline}>Time</span>,
         Cell: ({ value }: { value: string }) => (
-          <span className={hiddenTextRight}>{formatTime(value)}</span>
+          <span className={largeInline}>{formatTime(value)}</span>
         ),
         accessor: 'timestamp',
         disableFilters: true,

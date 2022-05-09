@@ -34,7 +34,7 @@ const Table: React.FC<TableProps> = ({
     <div className="overflow-x-auto">
       <table
         {...getTableProps()}
-        className="w-full divide-y divide-gray-200 text-center"
+        className="w-full divide-y divide-gray-200 text-left"
       >
         <thead className="bg-gray-50">
           {headerGroups.map((headerGroup, idx) => (
@@ -46,7 +46,7 @@ const Table: React.FC<TableProps> = ({
                   )}
                   key={idx}
                   scope="col"
-                  className="text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2 md:px-4 py-1 md:py-2"
                 >
                   {column.render('Header')}
                   <span>

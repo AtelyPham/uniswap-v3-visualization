@@ -47,7 +47,7 @@ const TokenTable: React.FC<TokenTableProps> = ({
     [tokensData],
   );
 
-  const responsiveClassName = 'sm:inline-block sm:w-full';
+  const responsiveClassName = 'sm:inline';
   const hiddenClassName = classNames('hidden', responsiveClassName);
   const columns = useMemo<ReadonlyArray<Column>>(
     () => [
@@ -61,15 +61,10 @@ const TokenTable: React.FC<TokenTableProps> = ({
       },
       {
         Header: () => (
-          <span className={classNames(responsiveClassName, 'text-left')}>
-            Name
-          </span>
+          <span className={classNames(responsiveClassName)}>Name</span>
         ),
         Cell: args => (
-          <TokenCell
-            className={classNames(responsiveClassName, 'text-left')}
-            {...args}
-          />
+          <TokenCell className={classNames(responsiveClassName)} {...args} />
         ),
         accessor: 'name',
         accessorSymbol: 'symbol',
@@ -77,12 +72,10 @@ const TokenTable: React.FC<TokenTableProps> = ({
       },
       {
         Header: () => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
-            Price
-          </span>
+          <span className={classNames(hiddenClassName)}>Price</span>
         ),
         Cell: ({ value }: { value: number }) => (
-          <span className={classNames(hiddenClassName, 'text-right')}>
+          <span className={classNames(hiddenClassName)}>
             {formatDollarAmount(value)}
           </span>
         ),
@@ -90,12 +83,10 @@ const TokenTable: React.FC<TokenTableProps> = ({
       },
       {
         Header: () => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
-            Price Change
-          </span>
+          <span className={classNames(hiddenClassName)}>Price Change</span>
         ),
         Cell: ({ value }: { value: number }) => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
+          <span className={classNames(hiddenClassName)}>
             <Percent value={value} />
           </span>
         ),
@@ -103,25 +94,19 @@ const TokenTable: React.FC<TokenTableProps> = ({
       },
       {
         Header: () => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
-            Volume 24h
-          </span>
+          <span className={classNames(responsiveClassName)}>Volume 24h</span>
         ),
         Cell: ({ value }: { value: number }) => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
+          <span className={classNames(responsiveClassName)}>
             {formatDollarAmount(value)}
           </span>
         ),
         accessor: 'volumeUSD',
       },
       {
-        Header: () => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
-            tvl
-          </span>
-        ),
+        Header: () => <span className={classNames(hiddenClassName)}>tvl</span>,
         Cell: ({ value }: { value: number }) => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
+          <span className={classNames(hiddenClassName)}>
             {formatDollarAmount(value)}
           </span>
         ),

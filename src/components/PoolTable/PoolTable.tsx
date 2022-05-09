@@ -50,12 +50,17 @@ const PoolTable: React.FC<PoolTableProps> = ({
     [poolsData],
   );
 
-  const responsiveClassName = 'sm:inline-block sm:w-full';
+  const commonClassnames = classNames('py-1 sm:py-2');
+  const responsiveClassName = 'sm:inline';
   const hiddenClassName = classNames('hidden', responsiveClassName);
   const columns = useMemo<ReadonlyArray<Column>>(
     () => [
       {
-        Header: () => <span className={hiddenClassName}>#</span>,
+        Header: () => (
+          <span className={classNames(commonClassnames, hiddenClassName)}>
+            #
+          </span>
+        ),
         Cell: ({ value }: { value: any }) => (
           <span className={hiddenClassName}>{value}</span>
         ),
@@ -64,26 +69,21 @@ const PoolTable: React.FC<PoolTableProps> = ({
       },
       {
         Header: () => (
-          <span className={classNames(responsiveClassName, 'text-left')}>
+          <span className={classNames(commonClassnames, responsiveClassName)}>
             pool
           </span>
         ),
         Cell: args => (
-          <PoolCell
-            className={classNames(responsiveClassName, 'text-left')}
-            {...args}
-          />
+          <PoolCell className={classNames(responsiveClassName)} {...args} />
         ),
         accessor: 'feeTier',
         accessorToken0: 'token0',
         accessorToken1: 'token1',
       },
       {
-        Header: () => (
-          <span className={classNames(hiddenClassName, 'text-right')}>tvl</span>
-        ),
+        Header: () => <span className={classNames(hiddenClassName)}>tvl</span>,
         Cell: ({ value }: { value: number }) => (
-          <span className={classNames(hiddenClassName, 'text-right')}>
+          <span className={classNames(hiddenClassName)}>
             {formatDollarAmount(value)}
           </span>
         ),
@@ -91,12 +91,10 @@ const PoolTable: React.FC<PoolTableProps> = ({
       },
       {
         Header: (
-          <span className={classNames(responsiveClassName, 'text-right')}>
-            volume 24h
-          </span>
+          <span className={classNames(responsiveClassName)}>volume 24h</span>
         ),
         Cell: ({ value }: { value: number }) => (
-          <span className={classNames(responsiveClassName, 'text-right')}>
+          <span className={classNames(responsiveClassName)}>
             {formatDollarAmount(value)}
           </span>
         ),
@@ -104,12 +102,10 @@ const PoolTable: React.FC<PoolTableProps> = ({
       },
       {
         Header: () => (
-          <span className={classNames(hiddenClassName, 'text-right')}>
-            Voumn 7d
-          </span>
+          <span className={classNames(hiddenClassName)}>Voumn 7d</span>
         ),
         Cell: ({ value }: { value: number }) => (
-          <span className={classNames(hiddenClassName, 'text-right')}>
+          <span className={classNames(hiddenClassName)}>
             {formatDollarAmount(value)}
           </span>
         ),
