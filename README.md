@@ -13,6 +13,18 @@ Clone the repo:
 
 ```shell
 git clone https://github.com/AtelyPham/webb-full-stack-coding-challenge.git
+```
+
+or
+
+```shell
+git clone git@github.com:AtelyPham/webb-full-stack-coding-challenge.git
+```
+
+\
+Go to the cloned directory
+
+```shell
 cd webb-full-stack-coding-challenge
 ```
 
