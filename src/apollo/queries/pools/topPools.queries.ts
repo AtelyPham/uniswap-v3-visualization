@@ -1,5 +1,5 @@
 import { GetTopPoolsQuery } from 'types/graphql.d';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import { useClients } from 'hooks';
 import { useMemo } from 'react';
 
@@ -10,6 +10,18 @@ export const GET_TOP_POOLS = gql`
     }
   }
 `;
+
+export const useLazyTopPoolAddresses = () => {
+  const [getTopPools] = useLazyQuery<GetTopPoolsQuery>(GET_TOP_POOLS, {
+    fetchPolicy: 'network-only',
+  });
+
+  return async function () {
+    const { loading, error, data } = await getTopPools();
+    const formattedData = data ? data.pools.map(p => p.id) : undefined;
+    return { loading, error, data: formattedData };
+  };
+};
 
 /**
  * Fetch top addresses by volume

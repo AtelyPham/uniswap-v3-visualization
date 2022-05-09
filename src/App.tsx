@@ -2,7 +2,7 @@ import { Card, PoolTable, TokenTable } from 'components';
 import { TransactionTable } from 'components/TransactionTable';
 import { cloneDeep } from 'lodash';
 import React, { useMemo } from 'react';
-import { usePoolsState } from 'state/pools/hooks';
+import { usePoolsState, useRefreshPool } from 'state/pools/hooks';
 import { PoolData } from 'state/pools/reducer';
 import { useTokensState } from 'state/tokens/hooks';
 import { TokenData } from 'state/tokens/reducer';
@@ -13,11 +13,13 @@ import {
 
 function App() {
   const poolsState = usePoolsState();
+  const { status: poolStatus } = poolsState;
   const poolsData = useMemo(() => {
     return Object.values(poolsState.byAddress)
       .map(p => cloneDeep(p.data))
       .filter((p): p is PoolData => Boolean(p));
   }, [poolsState]);
+  const refreshPool = useRefreshPool();
 
   const tokensState = useTokensState();
   const tokensData = useMemo(() => {
@@ -50,7 +52,15 @@ function App() {
       </header>
       <main>
         <div className="w-full mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap justify-around justify-items-start">
-          <Card title="Top pools" isLoading={!poolsData.length}>
+          <Card
+            title="Top pools"
+            isLoading={
+              poolStatus.loading ||
+              poolsState.lastUpdated === undefined ||
+              !poolsData.length
+            }
+            onRefresh={() => refreshPool()}
+          >
             <PoolTable poolsData={poolsData} />
           </Card>
           <Card title="Top tokens" isLoading={!tokensData.length}>

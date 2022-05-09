@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { defaultStatusStore, StatusState } from 'state';
+import { StatusState } from 'state';
 import { currentTimestamp } from 'utils';
 import {
   refreshTransaction,
@@ -38,7 +38,10 @@ export interface TransactionState {
 
 export const initialState: TransactionState = {
   byNetwork: {},
-  status: defaultStatusStore,
+  status: {
+    loading: false,
+    error: false,
+  },
 };
 
 export default createReducer(initialState, builder =>

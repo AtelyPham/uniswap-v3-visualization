@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-import { PoolData } from './reducer';
+import { PoolData, PoolStatusState } from './reducer';
 
 // pool detail info
 export const updatePoolData = createAction<{ pools: PoolData[] }>(
@@ -10,3 +10,9 @@ export const updatePoolData = createAction<{ pools: PoolData[] }>(
 export const addPoolKeys = createAction<{ poolAddresses: string[] }>(
   'pool/addPoolKeys',
 );
+
+export const refreshPool = createAction('pools/refreshPool');
+
+export const updatePoolStatus = createAction<{
+  status: PoolStatusState;
+}>('pools/updatePoolStatus');

@@ -1,6 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { StatusState } from 'state';
 import { currentTimestamp } from 'utils';
-import { addPoolKeys, updatePoolData } from './actions';
+import {
+  addPoolKeys,
+  refreshPool,
+  updatePoolData,
+  updatePoolStatus,
+} from './actions';
 
 export interface PoolDataToken {
   address: string;
@@ -19,6 +25,8 @@ export interface PoolData {
   tvlUSDChange: number;
 }
 
+export type PoolStatusState = StatusState;
+
 export interface PoolsState {
   byAddress: {
     [address: string]: {
@@ -26,10 +34,16 @@ export interface PoolsState {
       lastUpdated: number | undefined;
     };
   };
+  status: PoolStatusState;
+  lastUpdated: number | undefined;
 }
 
 export const initialState = {
   byAddress: {},
+  status: {
+    loading: false,
+    error: false,
+  },
 } as PoolsState;
 
 export default createReducer(initialState, builder =>
@@ -43,6 +57,7 @@ export default createReducer(initialState, builder =>
             lastUpdated: currentTimestamp(),
           }),
       );
+      state.lastUpdated = currentTimestamp();
     })
     // add address to byAddress keys if not included yet
     .addCase(addPoolKeys, (state, { payload: { poolAddresses } }) => {
@@ -54,5 +69,14 @@ export default createReducer(initialState, builder =>
           };
         }
       });
+      state.lastUpdated = currentTimestamp();
+    })
+    .addCase(refreshPool, state => {
+      state.byAddress = initialState.byAddress;
+      state.lastUpdated = currentTimestamp();
+    })
+    .addCase(updatePoolStatus, (state, { payload: { status } }) => {
+      state.status = status;
+      state.lastUpdated = currentTimestamp();
     }),
 );

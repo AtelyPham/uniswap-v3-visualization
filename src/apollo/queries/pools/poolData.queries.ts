@@ -1,14 +1,14 @@
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import { useDeltaTimestamps } from 'hooks';
 import { PoolData } from 'state/pools/reducer';
 import {
   GetPoolDataQuery,
+  GetPoolDataQueryVariables,
   OrderDirection,
   Pool_OrderBy,
 } from 'types/graphql.d';
-import { ArrayElement } from 'types/utils';
-import { formatTokenSymbol, get2DayChange } from 'utils';
 import { useBlocksFromTimestamps } from '../blocks';
+import { formatPools } from './private';
 
 export const GET_POOL_DATA = gql`
   query GetPoolData(
@@ -39,17 +39,106 @@ export const GET_POOL_DATA = gql`
   }
 `;
 
-const parsePools = (pools: GetPoolDataQuery['pools']) =>
-  pools.reduce(
-    (
-      accum: { [address: string]: ArrayElement<GetPoolDataQuery['pools']> },
-      poolData,
-    ) => {
-      accum[poolData.id] = poolData;
-      return accum;
-    },
-    {},
-  );
+/**
+ *
+ * @returns a function to fetch new data
+ */
+export function useLazyPoolData() {
+  const [getAllPools] = useLazyQuery<GetPoolDataQuery>(GET_POOL_DATA, {
+    fetchPolicy: 'network-only',
+  });
+
+  // Get blocks in 24h, 48h, 1w ago
+  const [t24, t48, tWeek] = useDeltaTimestamps();
+  const { blocks, error: blocksError } = useBlocksFromTimestamps([
+    t24,
+    t48,
+    tWeek,
+  ]);
+  const [_block24, _block48, _blockWeek] = blocks ?? [];
+
+  return async function (poolAddresses: string[]) {
+    const commonVars = {
+      idIn: poolAddresses,
+      orderBy: Pool_OrderBy.TotalValueLockedUsd,
+      orderDirection: OrderDirection.Desc,
+    };
+
+    try {
+      const { loading, data, error } = await getAllPools({
+        variables: { ...commonVars },
+      });
+
+      const block24 = _block24 ? { number: _block24.number } : undefined;
+      const {
+        loading: loading24,
+        error: error24,
+        data: data24,
+      } = await getAllPools({
+        variables: { ...commonVars, block: block24 },
+      });
+
+      const block48 = _block48 ? { number: _block48.number } : undefined;
+      const {
+        loading: loading48,
+        error: error48,
+        data: data48,
+      } = await getAllPools({
+        variables: { ...commonVars, block: block48 },
+      });
+
+      const blockWeek = _blockWeek ? { number: _blockWeek.number } : undefined;
+      const {
+        loading: loadingWeek,
+        error: errorWeek,
+        data: dataWeek,
+      } = await getAllPools({
+        variables: { ...commonVars, block: blockWeek },
+      });
+
+      const hasAnyError = [
+        error,
+        error24,
+        error48,
+        errorWeek,
+        blocksError,
+      ].some(err => !!err);
+      const hasAnyLoading = [loading, loading24, loading48, loadingWeek].some(
+        l => !!l,
+      );
+
+      if (hasAnyError || hasAnyLoading) {
+        return {
+          loading: hasAnyLoading,
+          error: hasAnyError,
+          data: undefined,
+        };
+      }
+
+      const formatted = formatPools(
+        poolAddresses,
+        data,
+        data24,
+        data48,
+        dataWeek,
+      );
+
+      return {
+        loading: hasAnyLoading,
+        error: hasAnyError,
+        data: formatted,
+      };
+    } catch (error: any) {
+      return {
+        error: true,
+        data: undefined,
+      };
+    }
+  };
+}
+
+const useCommonQuery = (variables: GetPoolDataQueryVariables) =>
+  useQuery(GET_POOL_DATA, { variables });
 
 export const usePoolData = (
   poolAddresses: string[],
@@ -69,64 +158,38 @@ export const usePoolData = (
     t48,
     tWeek,
   ]);
-  const [block24, block48, blockWeek] = blocks ?? [];
+  const [_block24, _block48, _blockWeek] = blocks ?? [];
 
-  const commonVariables = {
+  const commonVars = {
     idIn: poolAddresses,
     orderBy: Pool_OrderBy.TotalValueLockedUsd,
     orderDirection: OrderDirection.Desc,
   };
 
-  const { loading, error, data } = useQuery<GetPoolDataQuery>(GET_POOL_DATA, {
-    variables: {
-      ...commonVariables,
-    },
+  const { loading, error, data } = useCommonQuery({
+    ...commonVars,
   });
 
+  const block24 = _block24 ? { number: _block24.number } : undefined;
   const {
     loading: loading24,
     error: error24,
     data: data24,
-  } = useQuery<GetPoolDataQuery>(GET_POOL_DATA, {
-    variables: {
-      ...commonVariables,
-      block: block24
-        ? {
-            number: block24.number,
-          }
-        : undefined,
-    },
-  });
+  } = useCommonQuery({ ...commonVars, block: block24 });
 
+  const block48 = _block48 ? { number: _block48.number } : undefined;
   const {
     loading: loading48,
     error: error48,
     data: data48,
-  } = useQuery<GetPoolDataQuery>(GET_POOL_DATA, {
-    variables: {
-      ...commonVariables,
-      block: block48
-        ? {
-            number: block48.number,
-          }
-        : undefined,
-    },
-  });
+  } = useCommonQuery({ ...commonVars, block: block48 });
 
+  const blockWeek = _blockWeek ? { number: _blockWeek.number } : undefined;
   const {
     loading: loadingWeek,
     error: errorWeek,
     data: dataWeek,
-  } = useQuery<GetPoolDataQuery>(GET_POOL_DATA, {
-    variables: {
-      ...commonVariables,
-      block: blockWeek
-        ? {
-            number: blockWeek.number,
-          }
-        : undefined,
-    },
-  });
+  } = useCommonQuery({ ...commonVars, block: blockWeek });
 
   const hasAnyError = [error, error24, error48, errorWeek, blocksError].some(
     err => !!err,
@@ -143,76 +206,12 @@ export const usePoolData = (
     };
   }
 
-  const parsed = data ? parsePools(data.pools) : {};
-  const parsed24 = data24 ? parsePools(data24.pools) : {};
-  const parsed48 = data48 ? parsePools(data48.pools) : {};
-  const parsedWeek = dataWeek ? parsePools(dataWeek.pools) : {};
-
-  // format data and calculate daily changes
-  const formattedPools = poolAddresses.reduce(
-    (accum: { [address: string]: PoolData }, address) => {
-      const current: ArrayElement<GetPoolDataQuery['pools']> | undefined =
-        parsed[address];
-      const oneDay: ArrayElement<GetPoolDataQuery['pools']> | undefined =
-        parsed24[address];
-      const twoDay: ArrayElement<GetPoolDataQuery['pools']> | undefined =
-        parsed48[address];
-      const week: ArrayElement<GetPoolDataQuery['pools']> | undefined =
-        parsedWeek[address];
-
-      const [volumeUSD, volumeUSDChange] =
-        current && oneDay && twoDay
-          ? get2DayChange(current.volumeUSD, oneDay.volumeUSD, twoDay.volumeUSD)
-          : current
-          ? [parseFloat(current.volumeUSD), 0]
-          : [0, 0];
-
-      const volumeUSDWeek =
-        current && week
-          ? parseFloat(current.volumeUSD) - parseFloat(week.volumeUSD)
-          : current
-          ? parseFloat(current.volumeUSD)
-          : 0;
-
-      const tvlUSD = current ? parseFloat(current.totalValueLockedUSD) : 0;
-
-      const tvlUSDChange =
-        current && oneDay
-          ? ((parseFloat(current.totalValueLockedUSD) -
-              parseFloat(oneDay.totalValueLockedUSD)) /
-              parseFloat(
-                oneDay.totalValueLockedUSD === '0'
-                  ? '1'
-                  : oneDay.totalValueLockedUSD,
-              )) *
-            100
-          : 0;
-
-      const feeTier = current ? parseInt(current.feeTier) : 0;
-
-      if (current) {
-        accum[address] = {
-          address,
-          feeTier,
-          token0: {
-            address: current.token0.id,
-            symbol: formatTokenSymbol(current.token0.id, current.token0.symbol),
-          },
-          token1: {
-            address: current.token1.id,
-            symbol: formatTokenSymbol(current.token1.id, current.token1.symbol),
-          },
-          volumeUSD,
-          volumeUSDChange,
-          volumeUSDWeek,
-          tvlUSD,
-          tvlUSDChange,
-        };
-      }
-
-      return accum;
-    },
-    {},
+  const formattedPools = formatPools(
+    poolAddresses,
+    data,
+    data24,
+    data48,
+    dataWeek,
   );
 
   return {
