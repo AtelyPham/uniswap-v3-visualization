@@ -88,9 +88,10 @@ const TransactionTable: React.FC<TransactioniTableProps> = ({
           column: any;
         }) => {
           const symbol = row.original[column.accesorTokenSymbol];
+          const amount = Math.abs(value ?? 0);
           return (
             <span className={hiddenToLarge}>{`${formatAmount(
-              value,
+              amount,
             )} ${symbol}`}</span>
           );
         },
@@ -110,9 +111,10 @@ const TransactionTable: React.FC<TransactioniTableProps> = ({
           column: any;
         }) => {
           const symbol = row.original[column.accesorTokenSymbol];
+          const amount = Math.abs(value ?? 0);
           return (
             <span className={hiddenToLarge}>{`${formatAmount(
-              value,
+              amount,
             )} ${symbol}`}</span>
           );
         },
