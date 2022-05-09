@@ -1,15 +1,31 @@
 import React from 'react';
 import { Error } from '../Error';
 import { Spinner } from '../Spinner';
-import { FaSpinner } from 'react-icons/fa';
+import { HiOutlineRefresh } from 'react-icons/hi';
+import classNames from 'classnames';
 
-const Button = (props: { children?: any; onClick?: () => any }) => {
+const Button = (props: {
+  children?: any;
+  onClick?: () => any;
+  isDisabled?: boolean;
+}) => {
+  const className = classNames({
+    'bg-blue-300': !!props.isDisabled,
+    'cursor-not-allowed': !!props.isDisabled,
+    'bg-blue-600 hover:bg-blue-700': !props.isDisabled,
+    'cursor-pointer': !props.isDisabled,
+    'focus:ring-4 focus:outline-none focus:ring-blue-300': !props.isDisabled,
+  });
   return (
     <div className="mb-2">
       <button
         type="button"
         onClick={props.onClick}
-        className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center mr-2 inline-flex items-center shadow-lg cursor-pointer pointer-events-auto"
+        disabled={!!props.isDisabled}
+        className={classNames(
+          'text-white font-medium rounded-lg text-sm px-3 py-2 text-center mr-2 inline-flex items-center shadow-lg',
+          className,
+        )}
       >
         {props.children}
       </button>
@@ -37,10 +53,12 @@ const Card = ({
           {title}
         </h1>
         {onRefresh && (
-          <Button onClick={onRefresh}>
-            {isLoading && (
-              <FaSpinner className="inline w-4 h-4 mr-3 text-white animate-spin" />
-            )}
+          <Button onClick={onRefresh} isDisabled={isLoading}>
+            <HiOutlineRefresh
+              className={classNames('inline w-4 h-4 mr-2 text-white', {
+                'animate-spin': isLoading,
+              })}
+            />
             {isLoading ? 'Loading...' : 'Refresh'}
           </Button>
         )}

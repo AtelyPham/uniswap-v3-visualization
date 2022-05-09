@@ -1,6 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { currentTimestamp } from 'utils';
-import { updateTransactions, refreshTransaction } from './actions';
+import {
+  updateTransactions,
+  refreshTransaction,
+  updateTransactionStatus,
+} from './actions';
 export enum TransactionType {
   SWAP,
   MINT,
@@ -21,15 +25,25 @@ export type TransactionData = {
   amountToken1: number;
 };
 
+export type TransactionStatusState = {
+  loading?: boolean;
+  error?: boolean;
+};
+
 export interface TransactionState {
   byNetwork: {
     transactions?: TransactionData[];
     lastUpdate?: number;
   };
+  status: TransactionStatusState;
 }
 
 export const initialState: TransactionState = {
   byNetwork: {},
+  status: {
+    loading: false,
+    error: false,
+  },
 };
 
 export default createReducer(initialState, builder =>
@@ -38,5 +52,10 @@ export default createReducer(initialState, builder =>
       state.byNetwork.transactions = transactions;
       state.byNetwork.lastUpdate = currentTimestamp();
     })
-    .addCase(refreshTransaction, () => initialState),
+    .addCase(refreshTransaction, state => {
+      state.byNetwork = initialState.byNetwork;
+    })
+    .addCase(updateTransactionStatus, (state, { payload: { status } }) => {
+      state.status = status;
+    }),
 );

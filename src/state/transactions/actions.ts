@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-import { TransactionData } from './reducer';
+import { TransactionData, TransactionStatusState } from './reducer';
 
 export const updateTransactions = createAction<{
   transactions: TransactionData[];
@@ -8,3 +8,7 @@ export const updateTransactions = createAction<{
 export const refreshTransaction = createAction(
   'transactions/refreshTransactions',
 );
+
+export const updateTransactionStatus = createAction<{
+  status: TransactionStatusState;
+}>('transactions/updateTransactionStatus');

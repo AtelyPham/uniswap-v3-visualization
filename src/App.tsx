@@ -1,15 +1,18 @@
-import { POOLS_DATA, TOKENS_DATA } from 'apollo';
 import { Card, PoolTable, TokenTable } from 'components';
 import { TransactionTable } from 'components/TransactionTable';
 import { cloneDeep } from 'lodash';
 import React, { useMemo } from 'react';
+import { usePoolsState } from 'state/pools/hooks';
+import { PoolData } from 'state/pools/reducer';
+import { useTokensState } from 'state/tokens/hooks';
+import { TokenData } from 'state/tokens/reducer';
 import {
   useRefreshTransaction,
-  useTransaction,
+  useTransactionState,
 } from 'state/transactions/hooks';
 
 function App() {
-  /* const poolsState = usePoolsState();
+  const poolsState = usePoolsState();
   const poolsData = useMemo(() => {
     return Object.values(poolsState)
       .map(p => cloneDeep(p.data))
@@ -22,8 +25,12 @@ function App() {
       .map(t => cloneDeep(t.data))
       .filter((t): t is TokenData => Boolean(t));
   }, [tokensState]);
- */
-  const [transactions] = useTransaction();
+
+  const {
+    byNetwork: { lastUpdate, transactions },
+    status,
+  } = useTransactionState();
+
   const transactionsData = useMemo(() => {
     if (!transactions) {
       return [];
@@ -43,15 +50,16 @@ function App() {
       </header>
       <main>
         <div className="w-full mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap justify-around justify-items-start">
-          <Card title="Top pools" isLoading={!POOLS_DATA.length}>
-            <PoolTable poolsData={POOLS_DATA} />
+          <Card title="Top pools" isLoading={!poolsData.length}>
+            <PoolTable poolsData={poolsData} />
           </Card>
-          <Card title="Top tokens" isLoading={!TOKENS_DATA.length}>
-            <TokenTable tokensData={TOKENS_DATA} />
+          <Card title="Top tokens" isLoading={!tokensData.length}>
+            <TokenTable tokensData={tokensData} />
           </Card>
           <Card
             title="Transaction"
-            isLoading={!transactionsData?.length}
+            isLoading={status.loading || lastUpdate === undefined}
+            isError={status.error}
             onRefresh={() => refreshTx()}
           >
             <TransactionTable transactionsData={transactionsData} />

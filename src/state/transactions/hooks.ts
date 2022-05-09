@@ -3,8 +3,20 @@ import { useDataClient } from 'hooks';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, AppState } from 'state';
-import { refreshTransaction, updateTransactions } from './actions';
-import { TransactionData } from './reducer';
+import {
+  refreshTransaction,
+  updateTransactions,
+  updateTransactionStatus,
+} from './actions';
+import {
+  TransactionData,
+  TransactionState,
+  TransactionStatusState,
+} from './reducer';
+
+export function useTransactionState(): TransactionState {
+  return useSelector((state: AppState) => state.transactions);
+}
 
 /**
  *
@@ -32,14 +44,37 @@ export function useTransaction(): [
 
 /**
  *
+ * @returns a tuple in which the first element is
+ * current transaction status state store in redus.
+ * The second element is a function to update the store
+ */
+export function useTransactionStatus(): [
+  TransactionStatusState,
+  (status: TransactionStatusState) => void,
+] {
+  const status = useSelector((state: AppState) => state.transactions.status);
+
+  const dispatch = useDispatch<AppDispatch>();
+  const setTransactionStatusState = useCallback(
+    (status: TransactionStatusState) =>
+      dispatch(updateTransactionStatus({ status })),
+    [dispatch],
+  );
+
+  return [status, setTransactionStatusState];
+}
+
+/**
+ *
  * @returns a function to fetch latest transactions
  * and udpate to redux store
  *
  */
-export function useRefreshTransaction(): () => void {
+export function useRefreshTransaction(): () => Promise<void> {
   const dispatch = useDispatch<AppDispatch>();
 
   const fetchTransactions = useLazyTransactionData();
+  const [, setStatus] = useTransactionStatus();
 
   // Function to refresh transactions in the store
   const refreshStore = useCallback(
@@ -49,8 +84,12 @@ export function useRefreshTransaction(): () => void {
 
   const client = useDataClient();
 
-  return useCallback(() => {
+  return useCallback(async () => {
+    setStatus({ loading: true, error: undefined });
+
     refreshStore();
-    fetchTransactions();
-  }, [client, refreshTransaction]);
+    await fetchTransactions();
+
+    setStatus({ loading: false });
+  }, [client, refreshStore]);
 }
