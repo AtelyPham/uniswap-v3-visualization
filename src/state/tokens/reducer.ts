@@ -1,6 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { StatusState } from 'state';
 import { currentTimestamp } from 'utils';
-import { updateTokenData, addTokenKeys } from './actions';
+import {
+  updateTokenData,
+  addTokenKeys,
+  refreshToken,
+  updateTokenStatus,
+} from './actions';
 
 export interface TokenData {
   name: string;
@@ -13,6 +19,8 @@ export interface TokenData {
   priceUSDChangeWeek: number;
 }
 
+export type TokenStatusState = StatusState;
+
 export interface TokensState {
   byAddress: {
     [address: string]: {
@@ -20,10 +28,16 @@ export interface TokensState {
       lastUpdated: number | undefined;
     };
   };
+  status: TokenStatusState;
+  lastUpdated?: number | undefined;
 }
 
 export const initialState: TokensState = {
   byAddress: {},
+  status: {
+    loading: false,
+    error: false,
+  },
 };
 
 export default createReducer(initialState, builder =>
@@ -37,6 +51,7 @@ export default createReducer(initialState, builder =>
             lastUpdated: currentTimestamp(),
           }),
       );
+      state.lastUpdated = currentTimestamp();
     })
     .addCase(addTokenKeys, (state, { payload: { tokenAddresses } }) => {
       tokenAddresses.map(address => {
@@ -47,5 +62,14 @@ export default createReducer(initialState, builder =>
           };
         }
       });
+      state.lastUpdated = currentTimestamp();
+    })
+    .addCase(refreshToken, state => {
+      state.byAddress = initialState.byAddress;
+      state.lastUpdated = currentTimestamp();
+    })
+    .addCase(updateTokenStatus, (state, { payload: { status } }) => {
+      state.status = status;
+      state.lastUpdated = currentTimestamp();
     }),
 );

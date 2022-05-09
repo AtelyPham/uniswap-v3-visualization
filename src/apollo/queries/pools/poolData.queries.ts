@@ -1,5 +1,5 @@
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
-import { useDeltaTimestamps } from 'hooks';
+import { getDeltaTimestamp, useBlockClient, useDeltaTimestamps } from 'hooks';
 import { PoolData } from 'state/pools/reducer';
 import {
   GetPoolDataQuery,
@@ -7,7 +7,7 @@ import {
   OrderDirection,
   Pool_OrderBy,
 } from 'types/graphql.d';
-import { useBlocksFromTimestamps } from '../blocks';
+import { getBlocksFromTimestamps, useBlocksFromTimestamps } from '../blocks';
 import { formatPools } from './private';
 
 export const GET_POOL_DATA = gql`
@@ -48,14 +48,7 @@ export function useLazyPoolData() {
     fetchPolicy: 'network-only',
   });
 
-  // Get blocks in 24h, 48h, 1w ago
-  const [t24, t48, tWeek] = useDeltaTimestamps();
-  const { blocks, error: blocksError } = useBlocksFromTimestamps([
-    t24,
-    t48,
-    tWeek,
-  ]);
-  const [_block24, _block48, _blockWeek] = blocks ?? [];
+  const blockClient = useBlockClient();
 
   return async function (poolAddresses: string[]) {
     const commonVars = {
@@ -65,11 +58,22 @@ export function useLazyPoolData() {
     };
 
     try {
+      // Get blocks in 24h, 48h, 1w ago
+      const [t24, t48, tWeek] = getDeltaTimestamp();
+      const _blocks = await getBlocksFromTimestamps(
+        [t24, t48, tWeek],
+        blockClient,
+      );
+      const blocks = _blocks
+        ? _blocks.map(b => parseFloat(b.number))
+        : undefined;
+      const [_block24, _block48, _blockWeek] = blocks ?? [];
+
       const { loading, data, error } = await getAllPools({
         variables: { ...commonVars },
       });
 
-      const block24 = _block24 ? { number: _block24.number } : undefined;
+      const block24 = _block24 ? { number: _block24 } : undefined;
       const {
         loading: loading24,
         error: error24,
@@ -78,7 +82,7 @@ export function useLazyPoolData() {
         variables: { ...commonVars, block: block24 },
       });
 
-      const block48 = _block48 ? { number: _block48.number } : undefined;
+      const block48 = _block48 ? { number: _block48 } : undefined;
       const {
         loading: loading48,
         error: error48,
@@ -87,7 +91,7 @@ export function useLazyPoolData() {
         variables: { ...commonVars, block: block48 },
       });
 
-      const blockWeek = _blockWeek ? { number: _blockWeek.number } : undefined;
+      const blockWeek = _blockWeek ? { number: _blockWeek } : undefined;
       const {
         loading: loadingWeek,
         error: errorWeek,
@@ -96,13 +100,9 @@ export function useLazyPoolData() {
         variables: { ...commonVars, block: blockWeek },
       });
 
-      const hasAnyError = [
-        error,
-        error24,
-        error48,
-        errorWeek,
-        blocksError,
-      ].some(err => !!err);
+      const hasAnyError = [error, error24, error48, errorWeek].some(
+        err => !!err,
+      );
       const hasAnyLoading = [loading, loading24, loading48, loadingWeek].some(
         l => !!l,
       );

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { ApolloClient, gql, NormalizedCacheObject } from '@apollo/client';
 import { useClients } from 'hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { splitQuery } from 'utils';
@@ -72,4 +72,41 @@ export function useBlocksFromTimestamps(timestamps: number[]): {
     blocks: blocksFormatted,
     error,
   };
+}
+
+/**
+ * @notice Fetches block objects for an array of timestamps.
+ * @dev blocks are returned in chronological order (ASC) regardless of input.
+ * @dev blocks are returned at string representations of Int
+ * @dev timestamps are returns as they were provided; not the block time.
+ * @param {Array} timestamps
+ */
+export async function getBlocksFromTimestamps(
+  timestamps: number[],
+  blockClient: ApolloClient<NormalizedCacheObject>,
+  skipCount = 500,
+) {
+  if (timestamps?.length === 0) {
+    return [];
+  }
+  const fetchedData: any = await splitQuery(
+    GET_BLOCKS,
+    blockClient,
+    [],
+    timestamps,
+    skipCount,
+  );
+
+  const blocks: any[] = [];
+  if (fetchedData) {
+    for (const t in fetchedData) {
+      if (fetchedData[t].length > 0) {
+        blocks.push({
+          timestamp: t.split('t')[1],
+          number: fetchedData[t][0]['number'],
+        });
+      }
+    }
+  }
+  return blocks;
 }

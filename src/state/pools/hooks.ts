@@ -76,7 +76,7 @@ export function useRefreshPool(): () => Promise<void> {
   const addPoolKeys = useAddPoolKeys();
 
   const fetchPoolAddresses = useLazyTopPoolAddresses();
-  const fetchTransactions = useLazyPoolData();
+  const fetchPools = useLazyPoolData();
   const [, setStatus] = usePoolStatus();
 
   // Function to refresh transactions in the store
@@ -93,7 +93,7 @@ export function useRefreshPool(): () => Promise<void> {
       return;
     }
 
-    const { data } = await fetchTransactions(addresses);
+    const { data } = await fetchPools(addresses);
     if (!data) {
       setStatus({ loading: false, error: true });
       return;

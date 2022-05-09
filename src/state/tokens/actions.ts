@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-import { TokenData } from './reducer';
+import { TokenData, TokenStatusState } from './reducer';
 
 // protocol wide info
 export const updateTokenData = createAction<{
@@ -10,3 +10,9 @@ export const updateTokenData = createAction<{
 export const addTokenKeys = createAction<{
   tokenAddresses: string[];
 }>('tokens/addTokenKeys');
+
+export const refreshToken = createAction('tokens/refreshToken');
+
+export const updateTokenStatus = createAction<{
+  status: TokenStatusState;
+}>('tokens/updateTokenStatus');

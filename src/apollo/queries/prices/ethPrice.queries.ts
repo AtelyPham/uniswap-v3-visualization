@@ -1,6 +1,6 @@
 import { EthPricesQuery } from 'types/graphql.d';
-import { useBlocksFromTimestamps } from '../blocks';
-import { useDeltaTimestamps, useClients } from 'hooks';
+import { getBlocksFromTimestamps, useBlocksFromTimestamps } from '../blocks';
+import { useDeltaTimestamps, useClients, getDeltaTimestamp } from 'hooks';
 import { useState, useEffect, useMemo } from 'react';
 import { ApolloClient, NormalizedCacheObject, gql } from '@apollo/client';
 
@@ -124,4 +124,36 @@ export function useEthPrices(): EthPrices | undefined {
   }, [formattedBlocks, blockError, dataClient, prices]);
 
   return prices;
+}
+
+/**
+ * returns eth prices at current, 24h, 48h, and 1w intervals
+ */
+export async function getEthPrices(): Promise<EthPrices | undefined> {
+  const { dataClient, blockClient } = useClients();
+
+  const [t24, t48, tWeek] = getDeltaTimestamp();
+
+  try {
+    const _blocks = await getBlocksFromTimestamps(
+      [t24, t48, tWeek],
+      blockClient,
+    );
+
+    const blocks = _blocks ? _blocks.map(b => parseFloat(b.number)) : undefined;
+
+    const { data, error } = await fetchEthPrices(
+      blocks as [number, number, number],
+      dataClient,
+    );
+
+    if (error) {
+      return undefined;
+    }
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
 }

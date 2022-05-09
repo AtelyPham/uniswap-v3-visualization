@@ -1,8 +1,14 @@
+import { useLazyTokenData, useLazyTopTopTokenAddresses } from 'apollo';
 import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, AppState } from 'state';
-import { addTokenKeys, updateTokenData } from './actions';
-import { TokenData, TokensState } from './reducer';
+import {
+  addTokenKeys,
+  refreshToken,
+  updateTokenData,
+  updateTokenStatus,
+} from './actions';
+import { TokenData, TokensState, TokenStatusState } from './reducer';
 
 /**
  *
@@ -71,4 +77,69 @@ export function useTokenDatas(tokenAddresses: string[]): TokenData[] {
     .filter((token): token is TokenData => Boolean(token));
 
   return tokensWithData;
+}
+
+/**
+ *
+ *
+ * @returns a tuple in which the first element is
+ * current token status state store in redux.
+ * The second element is a function to update the store
+ */
+export function useTokenStatus(): [
+  TokenStatusState,
+  (state: TokenStatusState) => void,
+] {
+  const status = useSelector((state: AppState) => state.tokens.status);
+
+  const dispatch = useDispatch<AppDispatch>();
+  const setTokenStatusState = useCallback(
+    (status: TokenStatusState) => dispatch(updateTokenStatus({ status })),
+    [dispatch],
+  );
+
+  return [status, setTokenStatusState];
+}
+
+/**
+ *
+ * @returns a function to fetch latest pools
+ * and udpate to redux store
+ *
+ */
+export function useRefreshToken(): () => Promise<void> {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const updateTokenData = useUpdateTokenData();
+  const addTokenKeys = useAddTokenKeys();
+
+  const fetchTokenAddresses = useLazyTopTopTokenAddresses();
+  const fetchTokens = useLazyTokenData();
+  const [, setStatus] = useTokenStatus();
+
+  // Function to refresh transactions in the store
+  const refreshStore = useCallback(() => dispatch(refreshToken()), [dispatch]);
+
+  return useCallback(async () => {
+    setStatus({ loading: true, error: undefined });
+
+    refreshToken();
+
+    const addresses = await fetchTokenAddresses();
+    if (!addresses) {
+      setStatus({ loading: false, error: true });
+      return;
+    }
+
+    const { data } = await fetchTokens(addresses);
+    if (!data) {
+      setStatus({ loading: false, error: true });
+      return;
+    }
+
+    addTokenKeys(addresses);
+    updateTokenData(Object.values(data));
+
+    setStatus({ loading: false });
+  }, [refreshStore]);
 }

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery, useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useClients } from 'hooks';
 import { TopTokensQuery } from 'types/graphql.d';
@@ -16,6 +16,20 @@ export const TOP_TOKENS = gql`
     }
   }
 `;
+
+export const useLazyTopTopTokenAddresses = () => {
+  const [getTopTokens] = useLazyQuery<TopTokensQuery>(TOP_TOKENS, {
+    fetchPolicy: 'network-only',
+  });
+
+  return async function () {
+    const { loading, error, data } = await getTopTokens();
+    if (!loading && !error && data) {
+      return data.tokens.map(t => t.id);
+    }
+    return undefined;
+  };
+};
 
 /**
  * Fetch top addresses by volume

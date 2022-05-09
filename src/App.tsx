@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash';
 import React, { useMemo } from 'react';
 import { usePoolsState, useRefreshPool } from 'state/pools/hooks';
 import { PoolData } from 'state/pools/reducer';
-import { useTokensState } from 'state/tokens/hooks';
+import { useRefreshToken, useTokensState } from 'state/tokens/hooks';
 import { TokenData } from 'state/tokens/reducer';
 import {
   useTransactionState,
@@ -22,11 +22,13 @@ function App() {
   const refreshPool = useRefreshPool();
 
   const tokensState = useTokensState();
+  const { status: tokenStatus } = tokensState;
   const tokensData = useMemo(() => {
     return Object.values(tokensState.byAddress)
       .map(t => cloneDeep(t.data))
       .filter((t): t is TokenData => Boolean(t));
   }, [tokensState]);
+  const refreshToken = useRefreshToken();
 
   const {
     byNetwork: { lastUpdate, transactions },
@@ -63,7 +65,11 @@ function App() {
           >
             <PoolTable poolsData={poolsData} />
           </Card>
-          <Card title="Top tokens" isLoading={!tokensData.length}>
+          <Card
+            title="Top tokens"
+            isLoading={tokenStatus.loading || !tokensData.length}
+            onRefresh={() => refreshToken()}
+          >
             <TokenTable tokensData={tokensData} />
           </Card>
           <Card
