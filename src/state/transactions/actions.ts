@@ -6,7 +6,7 @@ export const updateTransactions = createAction<{
 }>('transactions/updateTransactions');
 
 export const refreshTransaction = createAction(
-  'transactions/refreshTransactions',
+  'transactions/refreshTransaction',
 );
 
 export const updateTransactionStatus = createAction<{

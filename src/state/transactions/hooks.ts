@@ -45,7 +45,7 @@ export function useTransaction(): [
 /**
  *
  * @returns a tuple in which the first element is
- * current transaction status state store in redus.
+ * current transaction status state store in redux.
  * The second element is a function to update the store
  */
 export function useTransactionStatus(): [

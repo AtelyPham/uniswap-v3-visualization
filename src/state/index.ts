@@ -17,3 +17,13 @@ export default store;
 
 export type AppState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+export type StatusState = {
+  loading?: boolean;
+  error?: boolean;
+};
+
+export const defaultStatusStore = {
+  loading: false,
+  error: false,
+};

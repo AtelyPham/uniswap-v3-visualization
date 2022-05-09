@@ -1,8 +1,9 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { defaultStatusStore, StatusState } from 'state';
 import { currentTimestamp } from 'utils';
 import {
-  updateTransactions,
   refreshTransaction,
+  updateTransactions,
   updateTransactionStatus,
 } from './actions';
 export enum TransactionType {
@@ -25,10 +26,7 @@ export type TransactionData = {
   amountToken1: number;
 };
 
-export type TransactionStatusState = {
-  loading?: boolean;
-  error?: boolean;
-};
+export type TransactionStatusState = StatusState;
 
 export interface TransactionState {
   byNetwork: {
@@ -40,10 +38,7 @@ export interface TransactionState {
 
 export const initialState: TransactionState = {
   byNetwork: {},
-  status: {
-    loading: false,
-    error: false,
-  },
+  status: defaultStatusStore,
 };
 
 export default createReducer(initialState, builder =>
