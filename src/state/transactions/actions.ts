@@ -3,4 +3,8 @@ import { TransactionData } from './reducer';
 
 export const updateTransactions = createAction<{
   transactions: TransactionData[];
-}>('protocol/updateTransactions');
+}>('transactions/updateTransactions');
+
+export const refreshTransaction = createAction(
+  'transactions/refreshTransactions',
+);

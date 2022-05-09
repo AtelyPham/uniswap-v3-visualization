@@ -9,7 +9,7 @@ export default () => {
   const txData = useTransactionData();
 
   useEffect(() => {
-    if (!transactions && txData) {
+    if ((!transactions || !transactions.length) && txData) {
       setTransactions(txData);
     }
   }, [txData, transactions, setTransactions]);

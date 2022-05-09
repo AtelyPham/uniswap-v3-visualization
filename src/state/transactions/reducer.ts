@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { currentTimestamp } from 'utils';
-import { updateTransactions } from './actions';
+import { updateTransactions, refreshTransaction } from './actions';
 export enum TransactionType {
   SWAP,
   MINT,
@@ -33,11 +33,10 @@ export const initialState: TransactionState = {
 };
 
 export default createReducer(initialState, builder =>
-  builder.addCase(
-    updateTransactions,
-    (state, { payload: { transactions } }) => {
+  builder
+    .addCase(updateTransactions, (state, { payload: { transactions } }) => {
       state.byNetwork.transactions = transactions;
       state.byNetwork.lastUpdate = currentTimestamp();
-    },
-  ),
+    })
+    .addCase(refreshTransaction, () => initialState),
 );

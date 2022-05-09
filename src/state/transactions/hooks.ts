@@ -1,8 +1,9 @@
+import { useLazyTransactionData } from 'apollo';
+import { useDataClient } from 'hooks';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, AppState } from 'state';
-import { updateTransactions } from './actions';
+import { refreshTransaction, updateTransactions } from './actions';
 import { TransactionData } from './reducer';
 
 /**
@@ -27,4 +28,29 @@ export function useTransaction(): [
   );
 
   return [transactions, setTransactions];
+}
+
+/**
+ *
+ * @returns a function to fetch latest transactions
+ * and udpate to redux store
+ *
+ */
+export function useRefreshTransaction(): () => void {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const fetchTransactions = useLazyTransactionData();
+
+  // Function to refresh transactions in the store
+  const refreshStore = useCallback(
+    () => dispatch(refreshTransaction()),
+    [dispatch],
+  );
+
+  const client = useDataClient();
+
+  return useCallback(() => {
+    refreshStore();
+    fetchTransactions();
+  }, [client, refreshTransaction]);
 }
