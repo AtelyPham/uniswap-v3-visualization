@@ -86,6 +86,21 @@ function App() {
           </Card>
         </div>
       </main>
+      <footer className="p-4 rounded-lg shadow md:px-6 md:py-8">
+        <hr className="my-6 border-gray-400 sm:mx-auto lg:my-8" />
+        <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
+          © 2022. Make with ❤️ by{' '}
+          <a
+            href="https://github.com/AtelyPham"
+            className="hover:underline text-blue-400"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Trung-Tin Pham
+          </a>
+          .
+        </span>
+      </footer>
     </div>
   );
 }
