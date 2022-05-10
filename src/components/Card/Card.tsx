@@ -47,7 +47,7 @@ const Card = ({
   onRefresh?: () => any;
 }) => {
   return (
-    <div className="px-5 container lg:max-w-5xl mb-7">
+    <div className="px-5 container lg:max-w-5xl mb-14">
       <div className="flex justify-between items-center">
         <h1 className="capitalize mb-2 text-sm font-medium text-gray-600">
           {title}
