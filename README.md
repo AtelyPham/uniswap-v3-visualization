@@ -102,6 +102,6 @@ Other scripts:
 
 - [x] Include in-line documentation
 
-- [ ] Add summary and chart
+- [x] Add network summary session
 
 - [ ] Writing tests

@@ -1,13 +1,13 @@
 import { gql, useQuery } from '@apollo/client';
-import { useClients, useDeltaTimestamps } from 'hooks';
+import { useDeltaTimestamps } from 'hooks';
+import { useMemo } from 'react';
 import { NetworkData } from 'state/network/reducer';
-import { useBlocksFromTimestamps } from '../blocks';
 import {
   GetNetworkDataQuery,
   GetNetworkDataQueryVariables,
 } from 'types/graphql.d';
+import { useBlocksFromTimestamps } from '../blocks';
 import { formatNetworkData } from './private';
-import { useMemo } from 'react';
 
 export const GET_NETWORK_DATA = gql`
   query GetNetworkData($block: Block_height) {
