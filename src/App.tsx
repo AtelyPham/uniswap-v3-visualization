@@ -1,4 +1,4 @@
-import { Card, PoolTable, TokenTable } from 'components';
+import { Card, NetworkSummary, PoolTable, TokenTable } from 'components';
 import { TransactionTable } from 'components/TransactionTable';
 import { cloneDeep } from 'lodash';
 import React, { useMemo } from 'react';
@@ -8,8 +8,8 @@ import { PoolData } from 'state/pools/reducer';
 import { useRefreshToken, useTokensState } from 'state/tokens/hooks';
 import { TokenData } from 'state/tokens/reducer';
 import {
-  useTransactionState,
   useRefreshTransaction,
+  useTransactionState,
 } from 'state/transactions/hooks';
 
 function App() {
@@ -46,8 +46,6 @@ function App() {
   }, [transactions]);
   const refreshTx = useRefreshTransaction();
 
-  console.log(JSON.stringify(networkData));
-
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
@@ -59,6 +57,7 @@ function App() {
       </header>
       <main>
         <div className="w-full mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap justify-around justify-items-start">
+          <NetworkSummary data={networkData} />
           <Card
             title="Top pools"
             isLoading={
