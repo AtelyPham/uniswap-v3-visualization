@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import store from 'state';
+import NetworkUpdater from 'state/network/updater';
 import PoolUpdater from 'state/pools/updater';
 import TokenUpdater from 'state/tokens/updater';
 import TransactionUpdater from 'state/transactions/updater';
@@ -16,6 +17,7 @@ const root = ReactDOM.createRoot(
 
 const Updater = () => (
   <>
+    <NetworkUpdater />
     <PoolUpdater />
     <TokenUpdater />
     <TransactionUpdater />

@@ -2,6 +2,7 @@ import { Card, PoolTable, TokenTable } from 'components';
 import { TransactionTable } from 'components/TransactionTable';
 import { cloneDeep } from 'lodash';
 import React, { useMemo } from 'react';
+import { useNetworkData } from 'state/network/hooks';
 import { usePoolsState, useRefreshPool } from 'state/pools/hooks';
 import { PoolData } from 'state/pools/reducer';
 import { useRefreshToken, useTokensState } from 'state/tokens/hooks';
@@ -12,6 +13,8 @@ import {
 } from 'state/transactions/hooks';
 
 function App() {
+  const [networkData] = useNetworkData();
+
   const poolsState = usePoolsState();
   const { status: poolStatus } = poolsState;
   const poolsData = useMemo(() => {
@@ -42,6 +45,8 @@ function App() {
     return cloneDeep(transactions);
   }, [transactions]);
   const refreshTx = useRefreshTransaction();
+
+  console.log(JSON.stringify(networkData));
 
   return (
     <div className="min-h-screen bg-gray-100">
