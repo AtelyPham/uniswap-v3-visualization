@@ -105,7 +105,7 @@ export function useTransactionData(): TransactionData[] | undefined {
     const { data, error, loading } = useQuery<GetAllTransactionsQuery>(
       GET_ALL_TRANSACTIONS,
       {
-        fetchPolicy: 'cache-and-network',
+        fetchPolicy: 'network-only',
       },
     );
 
