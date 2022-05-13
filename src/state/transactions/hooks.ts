@@ -72,6 +72,7 @@ export function useTransactionStatus(): [
  */
 export function useRefreshTransaction(): () => Promise<void> {
   const dispatch = useDispatch<AppDispatch>();
+  const [, setTransactions] = useTransaction();
 
   const fetchTransactions = useLazyTransactionData();
   const [, setStatus] = useTransactionStatus();
@@ -88,7 +89,10 @@ export function useRefreshTransaction(): () => Promise<void> {
     setStatus({ loading: true, error: undefined });
 
     refreshStore();
-    await fetchTransactions();
+    const { data } = await fetchTransactions();
+    if (data) {
+      setTransactions(data);
+    }
 
     setStatus({ loading: false });
   }, [client, refreshStore]);

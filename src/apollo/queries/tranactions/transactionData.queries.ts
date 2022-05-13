@@ -71,7 +71,7 @@ export function useLazyTransactionData() {
   const [getAllTransactions] = useLazyQuery<GetAllTransactionsQuery>(
     GET_ALL_TRANSACTIONS,
     {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-and-network',
     },
   );
 
@@ -105,7 +105,7 @@ export function useTransactionData(): TransactionData[] | undefined {
     const { data, error, loading } = useQuery<GetAllTransactionsQuery>(
       GET_ALL_TRANSACTIONS,
       {
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-and-network',
       },
     );
 
