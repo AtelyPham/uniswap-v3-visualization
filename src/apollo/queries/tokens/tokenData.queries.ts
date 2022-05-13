@@ -1,3 +1,4 @@
+import { GetTokenDataQueryVariables } from './../../../types/graphql.d';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import { getDeltaTimestamp, useBlockClient, useDeltaTimestamps } from 'hooks';
 import { TokenData } from 'state/tokens/reducer';
@@ -138,8 +139,8 @@ export const useLazyTokenData = () => {
   };
 };
 
-const useCommonQuery = (variables: any) =>
-  useQuery<GetTokenDataQuery>(GET_TOKEN_DATA, { variables });
+const useCommonQuery = (variables: GetTokenDataQueryVariables, skip = false) =>
+  useQuery<GetTokenDataQuery>(GET_TOKEN_DATA, { variables, skip });
 
 /**
  * Fetch top addresses by volume
@@ -163,34 +164,35 @@ export function useTokenData(tokenAddresses: string[]): {
   const [_block24, _block48, _blockWeek] = blocks ?? [];
   const ethPrices = useEthPrices();
 
+  const isSkip = !tokenAddresses.length;
   const commonVars = {
     idIn: tokenAddresses,
     orderBy: Token_OrderBy.TotalValueLockedUsd,
     orderDirection: OrderDirection.Desc,
   };
 
-  const { loading, error, data } = useCommonQuery({ ...commonVars });
+  const { loading, error, data } = useCommonQuery({ ...commonVars }, isSkip);
 
   const block24 = _block24 ? { number: _block24.number } : undefined;
   const {
     loading: loading24,
     error: error24,
     data: data24,
-  } = useCommonQuery({ ...commonVars, block: block24 });
+  } = useCommonQuery({ ...commonVars, block: block24 }, isSkip);
 
   const block48 = _block48 ? { number: _block48.number } : undefined;
   const {
     loading: loading48,
     error: error48,
     data: data48,
-  } = useCommonQuery({ ...commonVars, block: block48 });
+  } = useCommonQuery({ ...commonVars, block: block48 }, isSkip);
 
   const blockWeek = _blockWeek ? { number: _blockWeek.number } : undefined;
   const {
     loading: loadingWeek,
     error: errorWeek,
     data: dataWeek,
-  } = useCommonQuery({ ...commonVars, block: blockWeek });
+  } = useCommonQuery({ ...commonVars, block: blockWeek }, isSkip);
 
   const anyError = Boolean(
     error || error24 || error48 || blockError || errorWeek,
