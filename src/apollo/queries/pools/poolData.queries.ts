@@ -137,8 +137,8 @@ export function useLazyPoolData() {
   };
 }
 
-const useCommonQuery = (variables: GetPoolDataQueryVariables) =>
-  useQuery(GET_POOL_DATA, { variables });
+const useCommonQuery = (variables: GetPoolDataQueryVariables, isSkip = false) =>
+  useQuery(GET_POOL_DATA, { variables, skip: isSkip });
 
 export const usePoolData = (
   poolAddresses: string[],
@@ -160,36 +160,35 @@ export const usePoolData = (
   ]);
   const [_block24, _block48, _blockWeek] = blocks ?? [];
 
+  const isSkip = !poolAddresses.length;
   const commonVars = {
     idIn: poolAddresses,
     orderBy: Pool_OrderBy.TotalValueLockedUsd,
     orderDirection: OrderDirection.Desc,
   };
 
-  const { loading, error, data } = useCommonQuery({
-    ...commonVars,
-  });
+  const { loading, error, data } = useCommonQuery({ ...commonVars }, isSkip);
 
   const block24 = _block24 ? { number: _block24.number } : undefined;
   const {
     loading: loading24,
     error: error24,
     data: data24,
-  } = useCommonQuery({ ...commonVars, block: block24 });
+  } = useCommonQuery({ ...commonVars, block: block24 }, isSkip);
 
   const block48 = _block48 ? { number: _block48.number } : undefined;
   const {
     loading: loading48,
     error: error48,
     data: data48,
-  } = useCommonQuery({ ...commonVars, block: block48 });
+  } = useCommonQuery({ ...commonVars, block: block48 }, isSkip);
 
   const blockWeek = _blockWeek ? { number: _blockWeek.number } : undefined;
   const {
     loading: loadingWeek,
     error: errorWeek,
     data: dataWeek,
-  } = useCommonQuery({ ...commonVars, block: blockWeek });
+  } = useCommonQuery({ ...commonVars, block: blockWeek }, isSkip);
 
   const hasAnyError = [error, error24, error48, errorWeek, blocksError].some(
     err => !!err,

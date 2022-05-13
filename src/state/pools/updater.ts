@@ -27,7 +27,7 @@ export default (): null => {
       }
       return accum;
     }, []);
-  }, [poolsState]);
+  }, [poolsState, poolsState.byAddress]);
 
   // update unloaded pool entries with fetched data
   const {

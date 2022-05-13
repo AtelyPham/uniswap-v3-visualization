@@ -102,7 +102,7 @@ const PoolTable: React.FC<PoolTableProps> = ({
       },
       {
         Header: () => (
-          <span className={classNames(hiddenClassName)}>Voumn 7d</span>
+          <span className={classNames(hiddenClassName)}>Volume 7d</span>
         ),
         Cell: ({ value }: { value: number }) => (
           <span className={classNames(hiddenClassName)}>
