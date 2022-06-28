@@ -1,4 +1,4 @@
-# 👨🏼‍💻 Visualize the [Uinswap](https://uniswap.org/) data using (The Graph Protocols)[https://thegraph.com/en/].
+# 👨🏼‍💻 Visualize the [Uniswap](https://uniswap.org/) data using [The Graph Protocol](https://thegraph.com/en/).
 
 Visualizes data from [Uniswap V3 Subgraph](https://github.com/Uniswap/v3-subgraph).
 
